@@ -1,7 +1,6 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import path from "path";
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -11,6 +10,10 @@ export default defineConfig({
       //자주 쓰는 변수,mixin 등을 전역scss로 설정할 때
       scss: {
         additionalData: `
+          @use "@/styles/index.scss";
+          @use "@/styles/mixin.scss";
+          @use "@/styles/variables.scss";
+          @use "@/styles/reset.scss";
         `,
       },
     },
@@ -42,6 +45,14 @@ export default defineConfig({
       {
         find: "@router",
         replacement: fileURLToPath(new URL("./src/router", import.meta.url)),
+      },
+      {
+        find: "@layouts",
+        replacement: fileURLToPath(new URL("./src/layouts", import.meta.url)),
+      },
+      {
+        find: "@pages",
+        replacement: fileURLToPath(new URL("./src/pages", import.meta.url)),
       },
     ],
   },
