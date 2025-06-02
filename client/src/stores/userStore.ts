@@ -2,6 +2,13 @@
 import { defineStore } from "pinia";
 import type { IUser } from "@/types/db"; // 타입은 type import로 불러오는게 더 명확
 
+/*
+ id: number;
+  nickname: string;
+  email: string;
+  Workspaces: IWorkspace[];
+*/
+
 export const useUserStore = defineStore("user", {
   state: (): IUser => ({
     id: 0,
@@ -37,11 +44,4 @@ export const useUserStore = defineStore("user", {
  actions: methods 역할. state를 변경하거나, 비동기 작업(예: API 호출)을 처리합니다.
 
  getter에서는 절대 state를 직접 바꾸지 말고, action에서 바꾼다.
-*/
-
-/*
- id: number;
-  nickname: string;
-  email: string;
-  Workspaces: IWorkspace[];
 */

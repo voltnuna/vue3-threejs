@@ -5,48 +5,41 @@
     <div>
       <input type="password" placeholder="Password" v-model="password" />
     </div>
-
     <div>
       <button type="submit">LOGIN</button>
     </div>
   </form>
 </template>
 
-<!-- ### POST /users/login
-
-- 로그인
-- body: { email: string(이메일), password: string(비밀번호) }
-- return: IUser -->
-
 <script setup lang="ts">
 import axios from "axios";
 import { ref } from "vue";
-import { useUserStore } from "@stores/userStore.ts"; // 경로에 맞게 수정
+import { useUserStore } from "@stores/userStore.ts";
 import { storeToRefs } from "pinia";
 
 const userStore = useUserStore(); // 스토어 인스턴스 생성
+
+//pinia의 state를 storeToRefs에 스토어 인스턴스 삽입하여 필요한 state나 getter 등을 구조분해로 가져와사용,
+// Pinia store의 state 값을 ref로 바꿔준다. Vue 컴포에서 반응형으로 값을 가져올 때 사용.
+const { id, nickname } = storeToRefs(userStore);
 
 const email = ref();
 const password = ref();
 
 const onSubmitEvent = () => {
-  alert("submit");
-
   axios
     .post("/api/users/login", {
       email: email.value,
       password: password.value,
     })
     .then((res) => {
-      console.log("로그인성공!!!", res.data);
-      userStore.setUser({
-        id: res.data.id,
-        email: res.data.email,
-        nickname: res.data.nickname,
-      });
+      userStore.setUser({ ...res.data });
     })
     .catch((err) => {
       console.log("로그인 실패", err.resposne.data);
+    })
+    .finally(() => {
+      console.log("pinia 저장 확인", id.value, nickname.value);
     });
 };
 </script>
