@@ -39,8 +39,8 @@ export default defineConfig({
         replacement: fileURLToPath(new URL("./src/styles", import.meta.url)),
       },
       {
-        find: "@store",
-        replacement: fileURLToPath(new URL("./src/store", import.meta.url)),
+        find: "@stores",
+        replacement: fileURLToPath(new URL("./src/stores", import.meta.url)),
       },
       {
         find: "@router",
@@ -54,6 +54,19 @@ export default defineConfig({
         find: "@pages",
         replacement: fileURLToPath(new URL("./src/pages", import.meta.url)),
       },
+      {
+        find: "@types",
+        replacement: fileURLToPath(new URL("./src/types", import.meta.url)),
+      },
     ],
+  },
+  server: {
+    proxy: {
+      "/api/": {
+        target: "http://localhost:3095",
+        changeOrigin: true,
+        ws: true, //websocket
+      },
+    },
   },
 });

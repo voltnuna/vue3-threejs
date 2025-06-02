@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import ExplorePage from "@pages/ExplorePage.vue";
 import GuidePage from "@pages/GuidePage.vue";
-
+import LoginPage from "@pages/LoginPage.vue";
+import SignupPage from "@pages/SignupPage.vue";
 /*
 MEMO: history의 세가지 옵션:
 - createWebHistory: HTML5 History API 사용, 실제 서비스용 SPA, 깔끔한 URL ex)/about	
@@ -20,6 +21,14 @@ export default createRouter({
     {
       path: "/guide",
       component: GuidePage,
+    },
+    {
+      path: "/login",
+      component: LoginPage,
+    },
+    {
+      path: "/signup",
+      component: SignupPage,
     },
   ],
 });

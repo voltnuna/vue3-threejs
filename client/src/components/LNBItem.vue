@@ -1,6 +1,6 @@
 <template>
   <li v-for="(menu, index) in menus" :key="index">
-    <a href=""> {{ menu }} </a>
+    <a href="/signup"> {{ menu }} </a>
   </li>
 </template>
 

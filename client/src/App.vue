@@ -1,8 +1,6 @@
 <script setup lang="ts">
 import Header from "@layouts/Header.vue";
 import LNB from "@layouts/LNB.vue";
-import ExplorePage from "@pages/ExplorePage.vue";
-import GuidePage from "@pages/GuidePage.vue";
 </script>
 
 <template>
