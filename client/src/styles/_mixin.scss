@@ -1,0 +1,32 @@
+@use "@styles/variables" as var;
+
+@mixin display-flex($dis: flex, $jus: center, $align: center) {
+  display: $dis;
+  justify-content: $jus;
+  align-items: $align;
+}
+
+//❗ MEMO: 미디어쿼리 .vue 파일에서 사용법은 믹스인과 같다.
+// .test {
+//   @include mobile {
+//     background: red;
+//   }
+// }
+
+@mixin mobile {
+  @media (max-width: var.$breakpoint-mobile) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (max-width: var.$breakpoint-tablet) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: var.$breakpoint-desktop) {
+    @content;
+  }
+}

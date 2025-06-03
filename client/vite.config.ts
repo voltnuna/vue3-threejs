@@ -10,10 +10,10 @@ export default defineConfig({
       //자주 쓰는 변수,mixin 등을 전역scss로 설정할 때
       scss: {
         additionalData: `
-          @use "@/styles/index.scss";
-          @use "@/styles/mixin.scss";
-          @use "@/styles/variables.scss";
-          @use "@/styles/reset.scss";
+          @use "@styles/_reset.scss";
+          @use "@styles/index.scss";
+          @use "@styles/_mixin.scss" as *;
+          @use "@styles/_variables.scss" as *; //❗ MEMO: '* as' 이거 안붙히면 .vue <style> 안에서 안불러와짐ㅜㅠ
         `,
       },
     },
@@ -22,7 +22,7 @@ export default defineConfig({
     alias: [
       {
         find: "@",
-        replacement: fileURLToPath(new URL("./src", import.meta.url)),
+        replacement: fileURLToPath(new URL("src", import.meta.url)),
       },
       {
         find: "@assets",

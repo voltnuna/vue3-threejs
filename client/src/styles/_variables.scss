@@ -1,4 +1,4 @@
-//palette-color
+//system-color
 $core-blue: #5865f2;
 $core-blurple: #e0e3ff;
 
@@ -12,3 +12,8 @@ $light-pink: #ff4cd2;
 $pastel-blurple: #e0e3ff;
 $pastel-green: #c8ffef;
 $pastel-pink: #f5c9ff;
+
+// Breakpoint 1024까지는 3개, 768이하 2개, 425이해 1개
+$breakpoint-mobile: 480px;
+$breakpoint-tablet: 768px;
+$breakpoint-desktop: 1024px;
