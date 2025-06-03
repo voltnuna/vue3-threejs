@@ -12,36 +12,25 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useUserStore } from "@stores/userStore.ts";
-import { storeToRefs } from "pinia";
+import { useRouter } from "vue-router";
 
-const userStore = useUserStore(); // 스토어 인스턴스 생성
+const userStore = useUserStore();
+const router = useRouter();
+const email = ref("");
+const password = ref("");
 
-//pinia의 state를 storeToRefs에 스토어 인스턴스 삽입하여 필요한 state나 getter 등을 구조분해로 가져와사용,
-// Pinia store의 state 값을 ref로 바꿔준다. Vue 컴포에서 반응형으로 값을 가져올 때 사용.
-const { id, nickname } = storeToRefs(userStore);
-
-const email = ref();
-const password = ref();
-
-const onSubmitEvent = () => {
-  axios
-    .post("/api/users/login", {
-      email: email.value,
-      password: password.value,
-    })
-    .then((res) => {
-      userStore.setUser({ ...res.data });
-    })
-    .catch((err) => {
-      console.log("로그인 실패", err.resposne.data);
-    })
-    .finally(() => {
-      console.log("pinia 저장 확인", id.value, nickname.value);
-    });
+const onSubmitEvent = async () => {
+  const res = await userStore.login(email.value, password.value);
+  console.log("로그인 페이지 입니다. 로그인 요청 결과: ", res);
+  router.push("/workspace");
 };
+
+onMounted(() => {
+  console.log("로그인 페이지입니다.", userStore.nickname);
+  userStore.nickname.length > 0 && router.push("/workspace");
+});
 </script>
 
 <style scoped lang="scss"></style>

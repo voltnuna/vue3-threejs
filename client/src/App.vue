@@ -1,29 +1,36 @@
 <script setup lang="ts">
-import Header from "@layouts/Header.vue";
-import LNB from "@layouts/LNB.vue";
+import { useUserStore } from "@stores/userStore";
+import DefaultLayout from "@layouts/DefaultLayout.vue";
+import { watch } from "vue";
+import { storeToRefs } from "pinia";
+import router from "./router";
+
+const userStore = useUserStore();
+const { nickname } = storeToRefs(userStore);
+
+watch(nickname, () => {
+  console.log("APP에서 nickname 감시중", nickname.value);
+  nickname.value.length <= 0 && router.push("/");
+});
 </script>
 
 <template>
-  <Header />
   <div id="contentArea">
-    <LNB />
-    <div class="view-area">
+    <DefaultLayout />
+    <div class="page-area">
       <RouterView />
     </div>
   </div>
 </template>
 
 <style lang="scss">
-#content {
-  font-size: 16px;
-}
 #contentArea {
   display: flex;
   justify-content: center;
   height: 100%;
   min-height: 100%;
   padding-top: 5.6rem;
-  .view-area {
+  .page-area {
     width: 100%;
     height: 100%;
   }

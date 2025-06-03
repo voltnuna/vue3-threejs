@@ -16,30 +16,24 @@
 </template>
 
 <script setup lang="ts">
-import axios from "axios";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
+import { useUserStore } from "@stores/userStore";
+import router from "@/router";
+const userStore = useUserStore();
+
 const email = ref();
 const nickname = ref();
 const password = ref();
 const pwcheck = ref();
 
 const onSubmitEvent = () => {
-  alert("submit");
-  console.log(email.value, password.value, pwcheck.value);
-
-  axios
-    .post("/api/users", {
-      email: email.value,
-      nickname: nickname.value,
-      password: password.value,
-    })
-    .then((res) => {
-      console.log("res", res.data);
-    })
-    .catch((err) => {
-      console.log(err.resposne.data);
-    });
+  const res = userStore.signup(email.value, nickname.value, password.value);
+  console.log("@signup_onSubmitEvent 결과:", res);
 };
+
+onMounted(() => {
+  userStore.nickname.length && router.push("/workspace");
+});
 </script>
 
 <style scoped lang="scss"></style>
