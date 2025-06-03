@@ -842,7 +842,19 @@ router.post("/users/login", isNotLoggedIn, (req, res, next) => {
 
 router.post("/users/logout", isLoggedIn, (req, res) => {
   req.logout(() => {
-    res.send("ok");
+    //session 삭제
+
+    // 세션 삭제
+    req.session.destroy(() => {
+      // 쿠키 삭제
+      res.clearCookie("connect.sid", {
+        path: "/", // 쿠키가 설정된 경로와 같아야 함
+        httpOnly: true, // 원래 설정과 일치시켜야 삭제됨
+        secure: false, // HTTPS 환경이면 true
+        sameSite: "lax", // 원래 설정 따라 맞춰야 함
+      });
+      res.send("ok");
+    });
   });
 });
 

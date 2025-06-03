@@ -52,6 +52,8 @@ const sessionOption = {
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
+    secure: false, // 배포시 true (https)
+    sameSite: "lax",
   },
 };
 if (prod) {
