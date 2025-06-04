@@ -19,7 +19,7 @@
         />
       </div>
       <button type="submit">LOGIN</button>
-      <a href="/signup">회원가입하러가기</a>
+      <router-link to="/signup">회원가입하러가기</router-link>
     </form>
   </div>
 </template>

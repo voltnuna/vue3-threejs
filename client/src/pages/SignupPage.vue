@@ -27,16 +27,21 @@
         />
       </div>
       <button type="submit">SIGNUP</button>
-      <a href="/login">로그인하러가기</a>
+      <router-link to="/login">로그인하러가기</router-link>
     </form>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
+import { useRoute } from "vue-router";
 import { useUserStore } from "@stores/userStore";
 import router from "@/router";
+import { usePathStore } from "@stores/pathStore";
+
 const userStore = useUserStore();
+const pathStore = usePathStore();
+const route = useRoute();
 
 const email = ref();
 const nickname = ref();
@@ -50,6 +55,7 @@ const onSubmitEvent = () => {
 const onChkPassword = () => {};
 
 onMounted(() => {
+  pathStore.getCurrentPath(route.path);
   userStore.nickname.length && router.push("/workspace");
 });
 </script>

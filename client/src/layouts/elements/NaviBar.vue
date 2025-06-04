@@ -1,9 +1,9 @@
 <template>
   <ul class="ws-list">
     <li v-for="(item, index) in workspaces" :key="index">
-      <a :href="`/workspace/${item}`"
+      <router-link to="`/workspace/${item}`"
         ><img :src="gravatar.url(item, { s: '53px', d: 'initials' })" alt=""
-      /></a>
+      /></router-link>
     </li>
     <li>
       <button type="button" @click.prevent="addWorkspace"></button>
