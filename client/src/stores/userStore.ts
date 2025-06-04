@@ -80,7 +80,7 @@ export const useUserStore = defineStore(
     };
     //<--- E: actions --->
 
-    return { logout, login, signup, nickname };
+    return { logout, login, signup, nickname, email, Workspaces };
   },
   {
     persist: true, // ✅ localStorage 저장 활성화

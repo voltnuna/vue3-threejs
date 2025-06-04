@@ -3,8 +3,9 @@ import ExplorePage from "@pages/ExplorePage.vue";
 import GuidePage from "@pages/GuidePage.vue";
 import LoginPage from "@pages/LoginPage.vue";
 import SignupPage from "@pages/SignupPage.vue";
-import { useUserStore } from "@/stores/userStore";
-import { storeToRefs } from "pinia";
+import DmPage from "@/pages/DmPage.vue";
+import ChannelPage from "@/pages/ChannelPage.vue";
+
 /*
 ❗ MEMO: history의 세가지 옵션:
 - createWebHistory: HTML5 History API 사용, 실제 서비스용 SPA, 깔끔한 URL ex)/about	
@@ -24,17 +25,26 @@ const router = createRouter({
       path: "/login",
       component: LoginPage,
     },
+
     {
-      path: "/guide",
-      component: GuidePage,
+      path: "/signup",
+      component: SignupPage,
     },
     {
       path: "/workspace",
       component: ExplorePage,
     },
     {
-      path: "/signup",
-      component: SignupPage,
+      path: "/workspace/dm",
+      component: DmPage,
+    },
+    {
+      path: "/workspace/channel",
+      component: ChannelPage,
+    },
+    {
+      path: "/guide",
+      component: GuidePage,
     },
   ],
 });

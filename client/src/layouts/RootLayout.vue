@@ -1,15 +1,13 @@
 <template>
   <Header />
-  <LNB />
   <div id="pageArea">
-    <Workspace />
+    <PageArea />
   </div>
 </template>
 
 <script setup lang="ts">
-import Header from "@layouts/Header.vue";
-import LNB from "@layouts/LNB.vue";
-import Workspace from "@layouts/Workspace.vue";
+import Header from "@layouts/elements/Header.vue";
+import PageArea from "@layouts/elements/PageArea.vue";
 </script>
 
 <!-- 이 곳에는 style에 scoped 속성 주지 말 것 -->
@@ -21,6 +19,6 @@ import Workspace from "@layouts/Workspace.vue";
   height: 100%;
   min-height: 100%;
   padding-top: 5.6rem;
-  padding-left: 24rem;
+  padding-left: 34rem;
 }
 </style>
