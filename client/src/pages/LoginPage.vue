@@ -27,9 +27,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useUserStore } from "@stores/userStore.ts";
-import { useRouter } from "vue-router";
+import { usePathStore } from "@stores/pathStore";
+import { useRoute, useRouter } from "vue-router";
 
 const userStore = useUserStore();
+const pathStore = usePathStore();
+
+const route = useRoute();
 const router = useRouter();
 const email = ref("");
 const password = ref("");
@@ -41,7 +45,7 @@ const onSubmitEvent = async () => {
 };
 
 onMounted(() => {
-  console.log("로그인 페이지입니다.", userStore.nickname);
+  pathStore.getCurrentPath(route.path);
   userStore.nickname.length > 0 && router.push("/workspace");
 });
 </script>

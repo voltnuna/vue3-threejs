@@ -1,5 +1,6 @@
 <template>
   <div class="header">
+    <!-- After Login -->
     <div v-if="userStore.nickname" class="wrap">
       <img
         :src="gravatar.url(email, { s: '50px', d: 'wavatar' })"
@@ -7,33 +8,40 @@
         :title="email"
         @click.prevent="onToggler"
       />
-
       <ul v-if="active" class="dropdown">
-        <li><button type="button" @click="">마이페이지</button></li>
-        <li><button type="button" @click="">하이</button></li>
         <li><button type="button" @click="onLogout">로그아웃</button></li>
       </ul>
     </div>
-    <div v-else><a href="/signup">signup</a></div>
-    <!-- S: -->
+    <!-- Before Login -->
+    <ul v-else>
+      <li v-if="pathStore.currentPath === '/login'">
+        <a href="/signup">signup</a>
+      </li>
+      <li v-else>
+        <a href="/login">login</a>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-import router from "@/router";
 import { onMounted, ref } from "vue";
-import { useUserStore } from "@stores/userStore.ts";
 import { storeToRefs } from "pinia";
 import gravatar from "gravatar";
 
+import { useUserStore } from "@stores/userStore.ts";
+import { usePathStore } from "@/stores/pathStore";
+import useRouter from "@/router";
+
 const userStore = useUserStore();
+const pathStore = usePathStore();
 const { email, nickname } = storeToRefs(userStore);
+
 const active = ref(false);
-
 const onToggler = () => (active.value = !active.value);
-
 const onLogout = async () => await userStore.logout();
-onMounted(() => userStore.nickname.length < 0 && router.push("/login"));
+
+onMounted(() => userStore.nickname.length < 0 && useRouter.push("/login"));
 </script>
 
 <style lang="scss" scoped>
@@ -60,6 +68,12 @@ onMounted(() => userStore.nickname.length < 0 && router.push("/login"));
     }
     img {
       border-radius: 50%;
+    }
+  }
+  ul {
+    display: flex;
+    li {
+      margin: 0 0.5rem;
     }
   }
 }
