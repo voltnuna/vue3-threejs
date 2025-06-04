@@ -76,12 +76,6 @@ export const useUserStore = defineStore(
         })
         .catch((err) => {
           console.log("@userStore_logout_action: logout 실패", err.status);
-          // if (err.status === 401) {
-          //   id.value = 0;
-          //   nickname.value = "";
-          //   email.value = "";
-          //   Workspaces.value = [];
-          // } 로그인 완성되면 삭제
         });
     };
     //<--- E: actions --->
