@@ -5,6 +5,7 @@ import LoginPage from "@pages/LoginPage.vue";
 import SignupPage from "@pages/SignupPage.vue";
 import DmPage from "@/pages/DmPage.vue";
 import ChannelPage from "@/pages/ChannelPage.vue";
+import WorkspacePage from "@/pages/WorkspacePage.vue";
 
 /*
 ❗ MEMO: history의 세가지 옵션:
@@ -23,23 +24,44 @@ const router = createRouter({
     },
     {
       path: "/login",
+      name: "Login",
       component: LoginPage,
     },
 
     {
       path: "/signup",
+      name: "Signup",
       component: SignupPage,
     },
     {
+      path: "/workspace/:id",
+      name: "Workspace",
+      component: WorkspacePage,
+      beforeEnter: async (to, from, next) => {
+        // 1. params으로 workspace의 id를 확인한다.
+        const wsId = to.params?.id;
+
+        // 2. postId의 값이 없을 경우, Home으로 이동한다.
+        if (!wsId) {
+          next({ name: "ExplorePage" });
+        }
+        // 3. postId의 값이 있을 경우, PostComponent에 진입한다.
+        next();
+      },
+    },
+    {
       path: "/workspace",
+      name: "ExplorePage",
       component: ExplorePage,
     },
     {
       path: "/workspace/dm",
+      name: "Dm",
       component: DmPage,
     },
     {
       path: "/workspace/channel",
+      name: "Channel",
       component: ChannelPage,
     },
     {
