@@ -27,26 +27,23 @@
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
 import { useUserStore } from "@stores/userStore.ts";
-import { usePathStore } from "@stores/pathStore";
-import { useRoute, useRouter } from "vue-router";
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
-const pathStore = usePathStore();
 
-const route = useRoute();
 const router = useRouter();
 const email = ref("");
 const password = ref("");
 
 const onSubmitEvent = async () => {
-  const res = await userStore.login(email.value, password.value);
+  const res = userStore.login(email.value, password.value);
   console.log("로그인 페이지 입니다. 로그인 요청 결과: ", res);
   router.push("/workspace");
 };
 
 onMounted(() => {
-  pathStore.getCurrentPath(route.path);
-  userStore.nickname.length > 0 && router.push("/workspace");
+  // pathStore.getCurrentPath(route.path);
+  // userStore.auth && router.push("/workspace");
 });
 </script>
 
@@ -59,9 +56,10 @@ onMounted(() => {
 .userform {
   width: 100%;
   height: 100%;
+  display: flex;
   form {
-    margin: 30rem auto 0;
     width: 25rem;
+    box-sizing: border-box;
   }
 }
 button {
@@ -71,8 +69,7 @@ button {
   border-radius: 7px;
   background-color: #0f0f0f;
   color: #fff;
-  display: inline-flex;
-  justify-content: center;
+  @include display-flex(inline-flex, center);
 }
 .input {
   padding: 0.8rem;

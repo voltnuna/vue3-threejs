@@ -34,33 +34,39 @@ const router = createRouter({
       component: SignupPage,
     },
     {
+      path: "/workspace/",
+      name: "ExplorePage",
+      component: ExplorePage,
+      beforeEnter: async (to, from, next) => {
+        next({ path: "/workspace/general" });
+      },
+    },
+    {
       path: "/workspace/:id",
       name: "Workspace",
       component: WorkspacePage,
       beforeEnter: async (to, from, next) => {
-        // 1. params으로 workspace의 id를 확인한다.
-        const wsId = to.params?.id;
-
-        // 2. postId의 값이 없을 경우, Home으로 이동한다.
-        if (!wsId) {
-          next({ name: "ExplorePage" });
+        const wsId = to.params?.id; // 1. params으로 workspace의 id를 확인한다.
+        if (wsId === "0") {
+          // 2. wsId 값이 없을 경우, ExplorePage으로 이동한다.
+          console.log("wsId값이...", wsId);
+          next({ path: "/workspace/general" });
         }
-        // 3. postId의 값이 있을 경우, PostComponent에 진입한다.
-        next();
+        next(); // 3. wsId의 값이 있을 경우, 해당 WorkSpace에 진입한다.
       },
     },
     {
-      path: "/workspace",
-      name: "ExplorePage",
+      path: "/workspace/general",
+      name: "GeneralPage",
       component: ExplorePage,
     },
     {
-      path: "/workspace/dm",
+      path: "/workspace/dm/",
       name: "Dm",
       component: DmPage,
     },
     {
-      path: "/workspace/channel",
+      path: "/workspace/channel/",
       name: "Channel",
       component: ChannelPage,
     },

@@ -1,9 +1,15 @@
 @use "@styles/variables" as var;
 
-@mixin display-flex($dis: flex, $jus: center, $align: center) {
+@mixin display-flex($dis: flex, $jus: center, $align: none) {
   display: $dis;
   justify-content: $jus;
   align-items: $align;
+}
+
+@mixin setPosition($pos: absolute, $top: 0, $right: 0) {
+  position: $pos;
+  top: $top;
+  right: $right;
 }
 
 //❗ MEMO: 미디어쿼리 .vue 파일에서 사용법은 믹스인과 같다.

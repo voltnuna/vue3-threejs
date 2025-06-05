@@ -1,6 +1,6 @@
 <template>
   <li v-for="(item, index) in lists" :key="index">
-    <router-link to="`/workspace/${item}`">{{ item }}</router-link>
+    <router-link :to="`/workspace/${item}`">{{ item }}</router-link>
   </li>
 </template>
 

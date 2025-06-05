@@ -1,7 +1,7 @@
 <template>
   <ul class="ws-list">
-    <li v-for="(item, index) in workspaces" :key="index">
-      <router-link to="`/workspace/${item}`"
+    <li v-for="(item, index) in wslist" :key="index">
+      <router-link :to="`/workspace/${item}`"
         ><img :src="gravatar.url(item, { s: '53px', d: 'initials' })" alt=""
       /></router-link>
     </li>
@@ -33,15 +33,15 @@ const store = useUserStore();
 const { Workspaces } = storeToRefs(store);
 
 const wsname = ref("");
-const workspaces = ref(["login"]);
-
-onMounted(() => {
-  console.log("Workspaces", Workspaces);
-});
+const wslist = ref(["general"]);
 
 const addWorkspace = () => {
   alert("add Workspace");
 };
+
+onMounted(() => {
+  //  wslist.value.concat(Workspaces); //사용자 가입 workspace 목록 wslist에 추가
+});
 </script>
 
 <style lang="scss" scoped>
@@ -54,9 +54,8 @@ const addWorkspace = () => {
   background-color: #212121;
   border-right: 1px solid #474141;
   button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    @include display-flex(flex, center, center);
+
     cursor: pointer;
     color: #fff;
     &::before {
@@ -70,16 +69,13 @@ const addWorkspace = () => {
     }
   }
   li {
-    display: flex;
-    justify-content: center;
+    @include display-flex(flex, center);
     width: 100%;
     text-align: center;
     height: 8rem;
   }
   a {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+    @include display-flex(inline-flex, center, center);
     padding: 2rem 2rem;
     width: 100%;
     cursor: pointer;

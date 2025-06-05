@@ -56,7 +56,7 @@ const onChkPassword = () => {};
 
 onMounted(() => {
   pathStore.getCurrentPath(route.path);
-  userStore.nickname.length && router.push("/workspace");
+  userStore.auth && router.push("/workspace");
 });
 </script>
 
@@ -81,8 +81,8 @@ button {
   border-radius: 7px;
   background-color: #0f0f0f;
   color: #fff;
-  display: inline-flex;
-  justify-content: center;
+
+  @include display-flex(inline-flex, center);
 }
 .input {
   padding: 0.8rem;

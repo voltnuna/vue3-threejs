@@ -51,9 +51,7 @@ const checked = ref(false);
   margin: 0 1rem;
 }
 .underline {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  @include display-flex(flex, center, center);
 
   padding: 1rem;
   border-bottom: 1px solid gray;
