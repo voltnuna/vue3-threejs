@@ -1,12 +1,20 @@
 <template>
   <div class="userform">
     <form @submit.prevent="onSubmitEvent">
-      <h1 class="title">SignUP</h1>
+      <h1 class="title">회원가입</h1>
       <div>
         <input
           type="email"
           v-model="email"
           placeholder="email address"
+          class="input input-md"
+        />
+      </div>
+      <div>
+        <input
+          type="nickname"
+          v-model="nickname"
+          placeholder="nickname"
           class="input input-md"
         />
       </div>
@@ -20,13 +28,13 @@
       </div>
       <div>
         <input
-          type="pwcheck"
+          type="password"
           v-model="pwcheck"
-          placeholder="password"
+          placeholder="password check"
           class="input input-md"
         />
       </div>
-      <button type="submit">SIGNUP</button>
+      <button type="submit">회원가입</button>
       <router-link to="/login">로그인하러가기</router-link>
     </form>
   </div>
@@ -34,66 +42,76 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from "vue";
-import { useRoute } from "vue-router";
 import { useUserStore } from "@stores/userStore";
 import router from "@/router";
-import { usePathStore } from "@stores/pathStore";
+// import { useRoute } from "vue-router";
+// import { usePathStore } from "@stores/pathStore";
 
 const userStore = useUserStore();
-const pathStore = usePathStore();
-const route = useRoute();
+//const pathStore = usePathStore();
+//const route = useRoute();
 
-const email = ref();
-const nickname = ref();
-const password = ref();
-const pwcheck = ref();
+const email = ref("");
+const nickname = ref("");
+const password = ref("");
+const pwcheck = ref("");
 
 const onSubmitEvent = () => {
-  const res = userStore.signup(email.value, nickname.value, password.value);
-  console.log("@signup_onSubmitEvent 결과:", res);
+  if (onChkPassword()) {
+    const res = userStore.signup(email.value, nickname.value, password.value);
+    res.then(() => router.push("/login"));
+  } else {
+    alert("비밀번호가 다릅니다");
+    password.value = "";
+    pwcheck.value = "";
+  }
 };
-const onChkPassword = () => {};
+const onChkPassword = () => password.value === pwcheck.value;
 
 onMounted(() => {
-  pathStore.getCurrentPath(route.path);
+  //console.log("SIGNUP PAGE ", route.path);
+  //pathStore.setCurrentPath(route.path);
   userStore.auth && router.push("/workspace");
 });
 </script>
 
 <style scoped lang="scss">
-.title {
-  text-align: center;
-  margin: 1rem 0;
-  font-size: 4.5rem;
-}
 .userform {
+  @include display-flex(inline-flex, center, flex-start);
   width: 100%;
   height: 100%;
-  form {
-    margin: 30rem auto 0;
-    width: 25rem;
+  padding-top: 15rem;
+  .title {
+    text-align: center;
+    margin: 3rem 0;
+    font-size: 5.5rem;
   }
-}
-button {
-  width: 24rem;
-  padding: 1.1rem;
-  font-size: 1.4rem;
-  border-radius: 7px;
-  background-color: #0f0f0f;
-  color: #fff;
 
-  @include display-flex(inline-flex, center);
-}
-.input {
-  padding: 0.8rem;
-  margin: 0.5rem 0;
-  border-radius: 7px;
+  form {
+    width: 30rem;
+    box-sizing: border-box;
+  }
+  .input {
+    padding: 0.8rem;
+    margin: 0.7rem 0;
+    border-radius: 7px;
 
-  &-md {
-    width: 24rem;
-    padding: 1.1rem;
-    font-size: 1.4rem;
-    border: 1px solid #615f5f;
+    &-md {
+      width: 30rem;
+      padding: 1.1rem;
+      font-size: 1.8rem;
+      border: 1px solid #615f5f;
+    }
+  }
+  button {
+    width: 30rem;
+    margin: 0.7rem 0;
+    padding: 1.5rem;
+    font-size: 1.8rem;
+    border-radius: 7px;
+    background-color: #0f0f0f;
+    color: #fff;
+    @include display-flex(inline-flex, center);
   }
 }
 </style>

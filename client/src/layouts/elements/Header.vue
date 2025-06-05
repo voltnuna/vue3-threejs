@@ -12,36 +12,22 @@
         <li><button type="button" @click="onLogout">로그아웃</button></li>
       </ul>
     </div>
-    <!-- Before Login -->
-    <ul v-else>
-      <li v-if="pathStore.currentPath === '/login'">
-        <a href="/signup">signup</a>
-      </li>
-      <li v-else>
-        <a href="/login">login</a>
-      </li>
-    </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import gravatar from "gravatar";
 
 import { useUserStore } from "@stores/userStore.ts";
-import { usePathStore } from "@/stores/pathStore";
-import useRouter from "@/router";
 
 const userStore = useUserStore();
-const pathStore = usePathStore();
 const { email, nickname } = storeToRefs(userStore);
 
 const active = ref(false);
 const onToggler = () => (active.value = !active.value);
 const onLogout = async () => await userStore.logout();
-
-onMounted(() => userStore.nickname.length < 0 && useRouter.push("/login"));
 </script>
 
 <style lang="scss" scoped>

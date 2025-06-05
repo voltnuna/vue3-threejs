@@ -1,36 +1,33 @@
 <template>
-  <ul class="ws-list">
-    <li v-for="(item, index) in wslist" :key="index">
-      <router-link :to="`/workspace/${item}`"
-        ><img :src="gravatar.url(item, { s: '53px', d: 'initials' })" alt=""
-      /></router-link>
-    </li>
-    <li>
-      <button type="button" @click.prevent="addWorkspace"></button>
-    </li>
-  </ul>
-  <div class="ws-sub">
-    <div class="ws-sub__head">
-      <h2>{{ wsname }}</h2>
-      <button type="button">글작성</button>
+  <div class="navibar">
+    <ul class="ws-list">
+      <li v-for="(item, index) in wslist" :key="index">
+        <router-link :to="`/workspace/${item}`"
+          ><img :src="gravatar.url(item, { s: '53px', d: 'initials' })" alt=""
+        /></router-link>
+      </li>
+      <li>
+        <button type="button" @click.prevent="addWorkspace"></button>
+      </li>
+    </ul>
+    <div class="ws-sub">
+      <div class="ws-sub__head">
+        <h2>{{ wsname }}</h2>
+        <button type="button">글작성</button>
+      </div>
+      <ul class="ws-sub__chn">
+        <li></li>
+      </ul>
+      <ul class="ws-sub__dm">
+        <li></li>
+      </ul>
     </div>
-    <ul class="ws-sub__chn">
-      <li></li>
-    </ul>
-    <ul class="ws-sub__dm">
-      <li></li>
-    </ul>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import gravatar from "gravatar";
-import { useUserStore } from "@stores/userStore";
-import { storeToRefs } from "pinia";
-
-const store = useUserStore();
-const { Workspaces } = storeToRefs(store);
 
 const wsname = ref("");
 const wslist = ref(["general"]);
@@ -38,10 +35,6 @@ const wslist = ref(["general"]);
 const addWorkspace = () => {
   alert("add Workspace");
 };
-
-onMounted(() => {
-  //  wslist.value.concat(Workspaces); //사용자 가입 workspace 목록 wslist에 추가
-});
 </script>
 
 <style lang="scss" scoped>

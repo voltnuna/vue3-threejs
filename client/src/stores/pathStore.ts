@@ -4,9 +4,9 @@ import { ref } from "vue";
 export const usePathStore = defineStore("pagePath", () => {
   const currentPath = ref("");
 
-  const getCurrentPath = (path: string) => {
+  const setCurrentPath = (path: string) => {
     currentPath.value = path;
   };
 
-  return { currentPath, getCurrentPath };
+  return { currentPath, setCurrentPath };
 });

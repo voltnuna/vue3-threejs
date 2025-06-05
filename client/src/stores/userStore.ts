@@ -21,6 +21,7 @@ export const useUserStore = defineStore(
       nickname.value = "";
       email.value = "";
       Workspaces.value = [];
+      auth.value = false;
     };
 
     //<--- S: actions --->
@@ -31,7 +32,6 @@ export const useUserStore = defineStore(
           if (typeof res.data === "boolean" && !res.data) {
             clearUser();
             localStorage.clear(); // persist된 내용도 정리할 수 있음
-            auth.value = res.data;
             console.log("@fetchUser_사용자 인증", auth.value);
           } else {
             auth.value = true;
@@ -47,7 +47,6 @@ export const useUserStore = defineStore(
       _nickname: string,
       _password: string
     ) => {
-      const isSuccess = ref(false);
       await axios
         .post("/api/users", {
           email: _email,
@@ -55,20 +54,15 @@ export const useUserStore = defineStore(
           password: _password,
         })
         .then((res) => {
-          id.value = res.data.id;
-          nickname.value = res.data.nickname;
-          email.value = res.data.email;
-          isSuccess.value = true;
+          console.log("@회원가입 성공", res.data);
+          alert(`가입을 축하드립니다!`);
         })
         .catch((err) => {
-          console.log("@userStore_signup_action: 회원가입 실패", err);
-          isSuccess.value = false;
+          console.log("@회원가입 실패", err);
         });
-      return isSuccess.value;
     };
 
     const login = async (_email: string, _password: string) => {
-      const isSuccess = ref(false);
       await axios
         .post(
           "/api/users/login",
@@ -82,14 +76,12 @@ export const useUserStore = defineStore(
           id.value = res.data.id;
           nickname.value = res.data.nickname;
           email.value = res.data.email;
-          isSuccess.value = true;
-          console.log("Store 로그인 결과", isSuccess.value);
+          auth.value = true;
+          console.log("@로그인 성공");
         })
         .catch((err) => {
-          console.log("@userStore_login_action:로그인 실패", err);
-          isSuccess.value = false;
+          console.log("@로그인 실패", err.message);
         });
-      return isSuccess.value;
     };
 
     const logout = () => {
