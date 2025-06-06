@@ -3,7 +3,7 @@
     <div v-if="modalType === 'workspace'">
       <form @submit.prevent="handleSubmit">
         <div class="modal-head">
-          <span>워크스페이스 생성하기</span>
+          <span>워크스페이스 생성</span>
           <button type="button" @click="$emit('modalClose')" class="close">
             X
           </button>
@@ -31,10 +31,11 @@
         </div>
       </form>
     </div>
-    <div v-else>
+    <!--  -->
+    <div v-else-if="modalType === 'channel'">
       <form @submit.prevent="handleSubmit">
         <div class="modal-head">
-          <span>채널 생성하기</span>
+          <span>채널 생성</span>
           <button type="button" @click="$emit('modalClose')" class="close">
             X
           </button>
@@ -57,6 +58,30 @@
         </div>
         <div class="modal-foot">
           <button type="submit">생성하기</button>
+        </div>
+      </form>
+    </div>
+    <!--  -->
+    <div v-else-if="modalType === 'member'">
+      <form @submit.prevent="handleSubmit">
+        <div class="modal-head">
+          <span>워크스페이스 멤버 초대</span>
+          <button type="button" @click="$emit('modalClose')" class="close">
+            X
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="inputwrap">
+            <input
+              type="text"
+              placeholder="Member's Email"
+              class="input input-lg"
+              v-model="name"
+            />
+          </div>
+        </div>
+        <div class="modal-foot">
+          <button type="submit">초대하기</button>
         </div>
       </form>
     </div>

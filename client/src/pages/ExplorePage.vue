@@ -1,5 +1,6 @@
 <template>
   <h1 class="bigtitle">ExplorePage</h1>
+  <div class="member-list"></div>
 </template>
 
 <script setup lang="ts"></script>

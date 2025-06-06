@@ -39,7 +39,8 @@ export const useUserStore = defineStore(
           }
         })
         .catch((err) => {
-          console.log("@fetchUser_사용자 인증 오류", err.message);
+          //console.log("@fetchUser_사용자 인증 오류", err.message);
+          console.dir(err);
         });
     };
 
@@ -59,7 +60,8 @@ export const useUserStore = defineStore(
           alert(`가입을 축하드립니다!`);
         })
         .catch((err) => {
-          console.log("@회원가입 실패", err);
+          //          console.log("@회원가입 실패", err);
+          console.dir(err);
         });
     };
 
@@ -81,7 +83,8 @@ export const useUserStore = defineStore(
           console.log("@로그인 성공");
         })
         .catch((err) => {
-          console.log("@로그인 실패", err.message);
+          //          console.log("@로그인 실패", err.message);
+          console.dir(err);
         });
       return;
     };
@@ -95,7 +98,8 @@ export const useUserStore = defineStore(
           localStorage.clear();
         })
         .catch((err) => {
-          console.log("@LOGOUT_FAIL: ", err.status);
+          //          console.log("@LOGOUT_FAIL: ", err.status);
+          console.dir(err);
         });
     };
     //<--- E: actions --->

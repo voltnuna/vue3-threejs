@@ -1,13 +1,11 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { IWorkspace, IChannel } from "@/types/db";
+import type { IWorkspace } from "@/types/db";
 import axios from "axios";
 
 export const useWsStore = defineStore("workspaces", () => {
   const workspaces = ref<IWorkspace[]>([]);
-  const channels = ref<IChannel[]>();
 
-  //### S: Workspace
   const fetchWorkspaces = async () => {
     await axios
       .get("/api/workspaces", { withCredentials: true })
@@ -15,7 +13,7 @@ export const useWsStore = defineStore("workspaces", () => {
         workspaces.value = res.data;
       })
       .catch((err) => {
-        console.log(err);
+        console.dir(err);
       });
   };
 
@@ -29,45 +27,13 @@ export const useWsStore = defineStore("workspaces", () => {
         console.log("create workspace", res.data);
       })
       .catch((err) => {
-        err;
+        console.dir(err);
       });
   };
-
-  //### E: Workspace
-
-  //### S: Channel
-  const fetchChannels = async (wsname: string) => {
-    await axios
-      .get(`/api/workspaces/${wsname}/channels`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        channels.value = res.data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
-
-  const createChannel = async (wsname: string, channel: string) => {
-    await axios
-      .post(`/api/workspaces/${wsname}/channels`, { name: channel })
-      .then((res) => {
-        channels.value = res.data;
-      })
-      .catch((err) => {
-        console.log("###채널생성 실패", err);
-      });
-  };
-
-  //### E: Channel
 
   return {
     workspaces,
-    channels,
     fetchWorkspaces,
-    fetchChannels,
     createWorkspace,
-    createChannel,
   };
 });
