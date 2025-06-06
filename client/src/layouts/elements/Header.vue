@@ -25,9 +25,18 @@ import { useUserStore } from "@stores/userStore.ts";
 const userStore = useUserStore();
 const { email, nickname } = storeToRefs(userStore);
 
+import { useRouter } from "vue-router";
+
+const router = useRouter();
+
 const active = ref(false);
 const onToggler = () => (active.value = !active.value);
-const onLogout = async () => await userStore.logout();
+const onLogout = () => {
+  const res = userStore.logout();
+  res.then(() => {
+    router.push("/login");
+  });
+};
 </script>
 
 <style lang="scss" scoped>
