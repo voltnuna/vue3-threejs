@@ -14,6 +14,7 @@ import WorkspacePage from "@/pages/WorkspacePage.vue";
 - createMemoryHistory: 브라우저 URL 사용 안 함, SSR(Server Side Rendering), 테스트 환경
 */
 
+//❗ MEMO: routes등록시엔 path에 param이 포함되는 것을 우선적으로 등록
 const router = createRouter({
   history: createWebHistory(),
   scrollBehavior: () => ({ top: 0 }),
@@ -43,6 +44,16 @@ const router = createRouter({
       },
     },
     {
+      path: "/workspaces/dm/",
+      name: "Dm",
+      component: DmPage,
+    },
+    {
+      path: "/workspaces/:workspace/channel/:channel",
+      name: "Channel",
+      component: ChannelPage,
+    },
+    {
       path: "/workspaces/:id",
       name: "Workspace",
       component: WorkspacePage,
@@ -56,21 +67,13 @@ const router = createRouter({
         next(); // 3. wsId의 값이 있을 경우, 해당 WorkSpace에 진입한다.
       },
     },
+
     {
       path: "/workspaces/general",
       name: "GeneralPage",
       component: ExplorePage,
     },
-    {
-      path: "/workspaces/dm/",
-      name: "Dm",
-      component: DmPage,
-    },
-    {
-      path: "/workspaces/channel/",
-      name: "Channel",
-      component: ChannelPage,
-    },
+
     {
       path: "/guide",
       component: GuidePage,
