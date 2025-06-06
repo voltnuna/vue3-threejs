@@ -11,8 +11,8 @@ export const useUserStore = defineStore(
     const id = ref(0);
     const nickname = ref("");
     const email = ref("");
-    const Workspaces = ref<IWorkspace[] | undefined>([]);
     const auth = ref(false);
+    const workspaces = ref<IWorkspace[]>([]);
     //S: getter (computed처럼 사용)
     //    const loginedUser = computed(() => email.value);
 
@@ -20,8 +20,8 @@ export const useUserStore = defineStore(
       id.value = 0;
       nickname.value = "";
       email.value = "";
-      Workspaces.value = [];
       auth.value = false;
+      workspaces.value = [];
     };
 
     //<--- S: actions --->
@@ -32,13 +32,14 @@ export const useUserStore = defineStore(
           if (typeof res.data === "boolean" && !res.data) {
             clearUser();
             localStorage.clear(); // persist된 내용도 정리할 수 있음
-            console.log("@fetchUser_사용자 인증", auth.value);
+            console.log("@fetchUser_사용자 인증 실패", auth.value);
           } else {
             auth.value = true;
+            console.log("@fetchUser_사용자 인증 성공", auth.value);
           }
         })
         .catch((err) => {
-          console.log("@fetchUser_오류", err.message);
+          console.log("@fetchUser_사용자 인증 오류", err.message);
         });
     };
 
@@ -82,10 +83,11 @@ export const useUserStore = defineStore(
         .catch((err) => {
           console.log("@로그인 실패", err.message);
         });
+      return;
     };
 
-    const logout = () => {
-      axios
+    const logout = async () => {
+      await axios
         .post("/api/users/logout", null, { withCredentials: true })
         .then((res) => {
           console.log("@LOGOUT_SUCCESS: ", res.data);
@@ -105,7 +107,6 @@ export const useUserStore = defineStore(
       signup,
       nickname,
       email,
-      Workspaces,
       auth,
     };
   },
