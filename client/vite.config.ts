@@ -12,6 +12,7 @@ export default defineConfig({
         additionalData: `
           @use "@styles/_reset.scss";
           @use "@styles/index.scss";
+          @use "@styles/_utils.scss" as *;
           @use "@styles/_mixin.scss" as *;
           @use "@styles/_variables.scss" as *; //❗ MEMO: '* as' 이거 안붙히면 .vue <style> 안에서 안불러와짐ㅜㅠ
         `,

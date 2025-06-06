@@ -58,8 +58,9 @@ const pwcheck = ref("");
 
 const onSubmitEvent = () => {
   if (onChkPassword()) {
-    const res = userStore.signup(email.value, nickname.value, password.value);
-    res.then(() => router.push("/login"));
+    userStore
+      .signup(email.value, nickname.value, password.value)
+      .then(() => router.push("/login"));
   } else {
     alert("비밀번호가 다릅니다");
     password.value = "";
@@ -68,11 +69,7 @@ const onSubmitEvent = () => {
 };
 const onChkPassword = () => password.value === pwcheck.value;
 
-onMounted(() => {
-  //console.log("SIGNUP PAGE ", route.path);
-  //pathStore.setCurrentPath(route.path);
-  userStore.auth && router.push("/workspace");
-});
+onMounted(() => {});
 </script>
 
 <style scoped lang="scss">

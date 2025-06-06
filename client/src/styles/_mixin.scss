@@ -6,10 +6,11 @@
   align-items: $align;
 }
 
-@mixin setPosition($pos: absolute, $top: 0, $right: 0) {
+@mixin setPosition($pos: absolute, $top: 0, $right: none, $left: none) {
   position: $pos;
   top: $top;
   right: $right;
+  left: $left;
 }
 
 //❗ MEMO: 미디어쿼리 .vue 파일에서 사용법은 믹스인과 같다.
