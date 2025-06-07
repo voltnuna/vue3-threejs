@@ -6,10 +6,12 @@ import axios from "axios";
 export const useWsStore = defineStore("workspaces", () => {
   const workspaces = ref<IWorkspace[]>([]);
 
+  // all ws
   const fetchWorkspaces = async () => {
     await axios
       .get("/api/workspaces", { withCredentials: true })
       .then((res) => {
+        console.log("fetchWorkspaces", res.data);
         workspaces.value = res.data;
       })
       .catch((err) => {

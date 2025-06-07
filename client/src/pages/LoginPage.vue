@@ -37,12 +37,12 @@ const email = ref("");
 const password = ref("");
 
 onMounted(() => {
-  userStore.auth && router.push("/workspace/general");
+  userStore.auth && router.push("/workspaces/general");
 
   watch(
     () => userStore.auth,
     () => {
-      userStore.auth && router.push("/workspace/general");
+      userStore.auth && router.push("/workspaces/general");
     }
   );
 });
@@ -51,7 +51,7 @@ const onSubmitEvent = async () => {
   await userStore
     .login(email.value, password.value)
     .then(() => {
-      router.push("/workspace/general");
+      router.push("/workspaces/general");
     })
     .catch(() => {
       alert("로그인 실패");
