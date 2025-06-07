@@ -39,7 +39,6 @@
       @add-workspace="onCreateWs"
     />
   </div>
-
   <div v-if="chnModal">
     <Modal
       modal-type="channel"
@@ -60,8 +59,8 @@
 //S: import lib
 import { onMounted, ref, watchEffect } from "vue";
 import { storeToRefs } from "pinia";
-import { useRoute } from "vue-router";
 //S: import store
+import { useUserStore } from "@stores/userStore";
 import { useWsStore } from "@stores/wsStore";
 import { useChnStore } from "@stores/channelStore";
 import { useMemberStore } from "@stores/memberStore";
@@ -69,6 +68,7 @@ import { useMemberStore } from "@stores/memberStore";
 import Modal from "@/components/Modal.vue";
 import NaviListItem from "@/components/NaviListItem.vue";
 
+import { useRoute } from "vue-router";
 const route = useRoute();
 
 //S: declare ref val
@@ -78,19 +78,21 @@ const wsModal = ref(false);
 const chnModal = ref(false);
 const memberModal = ref(false);
 
-const wsStore = useWsStore();
-const { workspaces } = storeToRefs(wsStore);
-
+const userStore = useUserStore();
 const memberStore = useMemberStore();
-
+const wsStore = useWsStore();
 const chnStore = useChnStore();
+
+const { workspaces } = storeToRefs(wsStore);
 const { channels } = storeToRefs(chnStore);
 
 //S: Modal Control
 const onCloseWsModal = () => (wsModal.value = false);
 const onOpenWsModal = () => (wsModal.value = true);
+
 const onCloseChnModal = () => (chnModal.value = false);
 const onOpenChnModal = () => (chnModal.value = true);
+
 const onCloseMemModal = () => (memberModal.value = false);
 const onOpenMemModal = () => (memberModal.value = true);
 //E:Modal Control
@@ -113,12 +115,16 @@ const onInviteMember = () => {
   });
 };
 
-onMounted(() => wsStore.fetchWorkspaces());
+onMounted(() => {
+  userStore.auth && wsStore.fetchWorkspaces();
+  //🔴BUG🔴: 로그인 이후 첫 랜더링 시 워크스페이스 목록 못 불러오는 이슈 있음
+});
 
+//router 변경될 때마다 param 값 추출
 watchEffect(() => {
   let workspace = route.params.workspace as string;
-  // fallback: param이 없으면 path에서 추출
   if (!workspace) {
+    // fallback: route.param이 없으면 fullPath에서 추출
     const parts = route.fullPath.split("/");
     workspace = parts[2]; // ['','workspaces','general']
     wsName.value = workspace;
@@ -134,7 +140,7 @@ watchEffect(() => {
 
 <style lang="scss" scoped>
 .navibar {
-  @include setPosition(fixed, 56px, none, 0);
+  @include setPosition(fixed, 46px, none, 0);
   width: 8rem;
   height: 100%;
   background-color: #212121;
@@ -160,7 +166,7 @@ watchEffect(() => {
 
   .channel-bar {
     position: fixed;
-    top: 56px;
+    top: 46px;
     left: 80px;
     width: 26rem;
     height: 100%;

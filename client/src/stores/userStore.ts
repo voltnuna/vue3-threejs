@@ -13,8 +13,6 @@ export const useUserStore = defineStore(
     const email = ref("");
     const auth = ref(false);
     const workspaces = ref<IWorkspace[]>([]);
-    //S: getter (computed처럼 사용)
-    //    const loginedUser = computed(() => email.value);
 
     const clearUser = () => {
       id.value = 0;
@@ -39,8 +37,7 @@ export const useUserStore = defineStore(
           }
         })
         .catch((err) => {
-          //console.log("@fetchUser_사용자 인증 오류", err.message);
-          console.dir(err);
+          console.dir("@fetchUser_사용자 인증 오류", err);
         });
     };
 
@@ -80,7 +77,7 @@ export const useUserStore = defineStore(
           nickname.value = res.data.nickname;
           email.value = res.data.email;
           auth.value = true;
-          console.log("@로그인 성공");
+          console.log("@로그인 성공", res.data);
         })
         .catch((err) => {
           //          console.log("@로그인 실패", err.message);
@@ -104,14 +101,27 @@ export const useUserStore = defineStore(
     };
     //<--- E: actions --->
 
+    const myWorkspace = async (id: number) => {
+      await axios
+        .get(`/api/workspaces/${id}`, { withCredentials: true })
+        .then((res) => {
+          workspaces.value = res.data;
+        })
+        .catch((err) => {
+          console.dir(err);
+        });
+    };
+
     return {
       fetchUser,
       logout,
       login,
       signup,
+      id,
       nickname,
       email,
       auth,
+      myWorkspace,
     };
   },
   {
