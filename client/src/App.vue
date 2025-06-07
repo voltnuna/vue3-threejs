@@ -11,13 +11,10 @@ import { storeToRefs } from "pinia";
 
 const userStore = useUserStore();
 const { auth } = storeToRefs(userStore);
-onBeforeMount(() => {
-  if (!auth) {
-    console.log("APP.vue mount 전 로컬스토리지 리셋");
-    localStorage.clear();
-  }
-});
+
 onMounted(() => {
-  //  !auth.value && router.push("/");
+  userStore.fetchUser().then(() => {
+    !auth.value && localStorage.clear();
+  });
 });
 </script>

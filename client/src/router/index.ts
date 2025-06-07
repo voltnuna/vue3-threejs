@@ -3,7 +3,6 @@ import ExplorePage from "@pages/ExplorePage.vue";
 import GuidePage from "@pages/GuidePage.vue";
 import LoginPage from "@pages/LoginPage.vue";
 import SignupPage from "@pages/SignupPage.vue";
-import DmPage from "@/pages/DmPage.vue";
 import ChannelPage from "@/pages/ChannelPage.vue";
 import WorkspacePage from "@/pages/WorkspacePage.vue";
 
@@ -35,19 +34,11 @@ const router = createRouter({
       component: SignupPage,
     },
     {
-      path: "/workspaces",
-      name: "ExplorePage",
+      path: "/workspaces/general",
+      name: "GeneralPage",
       component: ExplorePage,
-      beforeEnter: async (to, from, next) => {
-        console.log("Router");
-        next({ path: "/workspaces/general" });
-      },
     },
-    {
-      path: "/workspaces/dm/",
-      name: "Dm",
-      component: DmPage,
-    },
+
     {
       path: "/workspaces/:workspace/channel/:channel",
       name: "Channel",
@@ -66,12 +57,6 @@ const router = createRouter({
         }
         next(); // 3. wsId의 값이 있을 경우, 해당 WorkSpace에 진입한다.
       },
-    },
-
-    {
-      path: "/workspaces/general",
-      name: "GeneralPage",
-      component: ExplorePage,
     },
 
     {

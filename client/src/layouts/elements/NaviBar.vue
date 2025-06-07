@@ -2,22 +2,27 @@
   <div class="navibar">
     <!-- S: Workspace List -->
     <div class="workspace-bar">
-      <ListItem :lists="workspaces" />
+      <NaviListItem :lists="workspaces" />
     </div>
     <button
       type="button"
-      class="addBtn"
+      class="addBtn lg"
       @click.prevent="onOpenWsModal"
     ></button>
 
     <!-- S: Channel List -->
     <div class="channel-bar">
-      <div class="channel-bar__head">
+      <div class="title-wrap__lg">
         <h2 class="channel-bar__title">{{ wsName }}</h2>
-        <button type="button" @click.prevent="onOpenChnModal">채널생성</button>
+        <button type="button" @click.prevent="onOpenMemModal">멤버초대</button>
       </div>
       <div class="channel-bar__chn">
-        <h3>채널 리스트</h3>
+        <div class="title-wrap__md">
+          <h3>채널 리스트</h3>
+          <button class="" type="button" @click.prevent="onOpenChnModal">
+            채널추가
+          </button>
+        </div>
         <div v-for="(chn, idx) in channels" :key="idx">
           <router-link :to="`/workspaces/${wsName}/channel/${chn.name}`">
             <span class="router-link"> <span>#</span>{{ chn.name }}</span>
@@ -34,7 +39,6 @@
       @add-workspace="onCreateWs"
     />
   </div>
-
   <div v-if="chnModal">
     <Modal
       modal-type="channel"
@@ -42,30 +46,55 @@
       @add-channel="onCreateChn"
     />
   </div>
+  <div v-if="memberModal">
+    <Modal
+      modal-type="member"
+      @modal-close="onCloseMemModal"
+      @add-member="onInviteMember"
+    />
+  </div>
 </template>
 
 <script setup lang="ts" scoped>
+//S: import lib
 import { onMounted, ref, watchEffect } from "vue";
 import { storeToRefs } from "pinia";
+//S: import store
+import { useUserStore } from "@stores/userStore";
 import { useWsStore } from "@stores/wsStore";
-import { useRoute } from "vue-router";
+import { useChnStore } from "@stores/channelStore";
+import { useMemberStore } from "@stores/memberStore";
+//S: import component
 import Modal from "@/components/Modal.vue";
-import ListItem from "@/components/ListItem.vue";
+import NaviListItem from "@/components/NaviListItem.vue";
 
+import { useRoute } from "vue-router";
 const route = useRoute();
-const wsStore = useWsStore();
-const { workspaces, channels } = storeToRefs(wsStore);
+
+//S: declare ref val
 const wsName = ref("");
 
-//S: Modal Control
 const wsModal = ref(false);
 const chnModal = ref(false);
+const memberModal = ref(false);
 
+const userStore = useUserStore();
+const memberStore = useMemberStore();
+const wsStore = useWsStore();
+const chnStore = useChnStore();
+
+const { workspaces } = storeToRefs(wsStore);
+const { channels } = storeToRefs(chnStore);
+
+//S: Modal Control
 const onCloseWsModal = () => (wsModal.value = false);
 const onOpenWsModal = () => (wsModal.value = true);
 
 const onCloseChnModal = () => (chnModal.value = false);
 const onOpenChnModal = () => (chnModal.value = true);
+
+const onCloseMemModal = () => (memberModal.value = false);
+const onOpenMemModal = () => (memberModal.value = true);
 //E:Modal Control
 
 const onCreateWs = (name: string, url: string) => {
@@ -75,24 +104,34 @@ const onCreateWs = (name: string, url: string) => {
 };
 
 const onCreateChn = (name: string) => {
-  wsStore.createChannel(wsName.value, name).then(() => {
+  chnStore.createChannel(wsName.value, name).then(() => {
     onCloseChnModal();
   });
 };
 
-onMounted(() => wsStore.fetchWorkspaces());
+const onInviteMember = () => {
+  memberStore.inviteWsMember(wsName.value).then(() => {
+    onCloseMemModal();
+  });
+};
 
+onMounted(() => {
+  userStore.auth && wsStore.fetchWorkspaces();
+  //🔴BUG🔴: 로그인 이후 첫 랜더링 시 워크스페이스 목록 못 불러오는 이슈 있음
+});
+
+//router 변경될 때마다 param 값 추출
 watchEffect(() => {
   let workspace = route.params.workspace as string;
-  // fallback: param이 없으면 path에서 추출
   if (!workspace) {
+    // fallback: route.param이 없으면 fullPath에서 추출
     const parts = route.fullPath.split("/");
     workspace = parts[2]; // ['','workspaces','general']
     wsName.value = workspace;
   }
 
   if (workspace) {
-    wsStore.fetchChannels(workspace);
+    chnStore.fetchChannels(workspace);
   } else {
     console.log("No workspace name found.");
   }
@@ -101,34 +140,33 @@ watchEffect(() => {
 
 <style lang="scss" scoped>
 .navibar {
-  @include setPosition(fixed, 56px, none, 0);
+  @include setPosition(fixed, 46px, none, 0);
   width: 8rem;
   height: 100%;
   background-color: #212121;
   border-right: 1px solid #474141;
-  .addBtn {
-    width: 100%;
-    @include display-flex(flex, center, center);
-    cursor: pointer;
-    color: #fff;
-    &::before {
-      content: "+";
-      width: 53px;
-      height: 53px;
-      line-height: 53px;
-      font-size: 3rem;
-      background-color: grey;
-    }
-  }
+
   .workspace-bar {
     position: relative;
     padding-top: 1rem;
     padding-bottom: 1rem;
   }
+  .title-wrap {
+    &__lg {
+      @include display-flex(flex, space-between, center);
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid #474141;
+    }
+    &__md {
+      @include display-flex(flex, space-between, center);
+      padding-bottom: 0.8rem;
+      border-bottom: 1px solid #474141;
+    }
+  }
 
   .channel-bar {
     position: fixed;
-    top: 56px;
+    top: 46px;
     left: 80px;
     width: 26rem;
     height: 100%;
@@ -141,16 +179,11 @@ watchEffect(() => {
       line-height: 3.4rem;
       text-align: center;
     }
-    &__head {
-      @include display-flex(flex, space-between, center);
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid #474141;
-    }
+
     &__chn {
       width: 100%;
       height: 100%;
       h3 {
-        width: 100%;
         height: 3rem;
         display: flex;
         justify-content: flex-start;
@@ -171,6 +204,29 @@ watchEffect(() => {
         font-weight: 500;
       }
     }
+  }
+}
+
+.addBtn {
+  @include display-flex(flex, center, center);
+  width: 100%;
+  cursor: pointer;
+  color: #fff;
+  &.lg::before {
+    content: "+";
+    width: 53px;
+    height: 53px;
+    line-height: 53px;
+    font-size: 3rem;
+    background-color: grey;
+  }
+  &.md::after {
+    content: "+";
+    width: 25px;
+    height: 25px;
+    line-height: 25px;
+    font-size: 2rem;
+    border-radius: 50%;
   }
 }
 </style>

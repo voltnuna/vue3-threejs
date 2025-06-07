@@ -9,10 +9,20 @@
 <script setup lang="ts">
 import NaviBar from "@layouts/elements/NaviBar.vue";
 import Header from "@layouts/elements/Header.vue";
+import { useRouter } from "vue-router";
+import { onMounted } from "vue";
+import { useUserStore } from "@stores/userStore";
+
+const userStore = useUserStore();
+const router = useRouter();
 
 const props = defineProps<{
   auth: boolean;
 }>();
+
+onMounted(() => {
+  !userStore.auth.value && router.push("/login");
+});
 </script>
 
 <!-- 이 곳에는 style에 scoped 속성 주지 말 것 -->
@@ -25,7 +35,7 @@ const props = defineProps<{
   min-height: 100%;
 
   &:not(.logined) {
-    padding-top: 5.6rem;
+    padding-top: 4.6rem;
     padding-left: 34rem;
   }
   &.logined {

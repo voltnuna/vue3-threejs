@@ -20,5 +20,8 @@ module.exports = class WorkspaceMember extends Model {
       }
     );
   }
-  static associate(db) {}
+  static associate(db) {
+    db.WorkspaceMember.belongsTo(db.Workspace);
+    db.WorkspaceMember.belongsTo(db.User);
+  }
 };

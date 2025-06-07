@@ -2,12 +2,7 @@
   <div class="header">
     <!-- After Login -->
     <div v-if="userStore.nickname" class="wrap">
-      <img
-        :src="gravatar.url(email, { s: '50px', d: 'wavatar' })"
-        :alt="`${nickname}의 프로필 이미지`"
-        :title="email"
-        @click.prevent="onToggler"
-      />
+      <button type="button" @click="onToggler">{{ nickname }} 님</button>
       <ul v-if="active" class="dropdown">
         <li><button type="button" @click="onLogout">로그아웃</button></li>
       </ul>
@@ -31,6 +26,7 @@ const router = useRouter();
 
 const active = ref(false);
 const onToggler = () => (active.value = !active.value);
+
 const onLogout = () => {
   const res = userStore.logout();
   res.then(() => {
@@ -45,8 +41,11 @@ const onLogout = () => {
   top: 0px;
   left: 0px;
   width: 100%;
-  height: 5.6rem;
-  background-color: #0f0f0f;
+  height: 4.6rem;
+  /* background-color: #0f0f0f; */
+  /* border-bottom: 1px solid #474141; */
+  box-shadow: 0 0 6px 3px rgba(0, 0, 0, 0.3);
+  background-color: #212121;
   color: #fff;
   @include display-flex(flex, space-between, center);
   .wrap {
@@ -54,6 +53,7 @@ const onLogout = () => {
     width: 100%;
     height: 100%;
     display: flex;
+    padding: 0 1.5rem;
     justify-content: flex-end;
     align-items: center;
     button {
@@ -74,8 +74,8 @@ const onLogout = () => {
 }
 .dropdown {
   position: absolute;
-  top: 50%;
-  right: 50px;
+  top: 100%;
+  right: 90px;
   width: 13rem;
   height: auto;
   border-radius: 7px;

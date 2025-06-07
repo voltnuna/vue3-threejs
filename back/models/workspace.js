@@ -33,6 +33,7 @@ module.exports = class Workspace extends Model {
       through: db.WorkspaceMember,
       as: "Members",
     });
+    db.Workspace.hasMany(db.WorkspaceMember);
     db.Workspace.hasMany(db.Channel);
     db.Workspace.hasMany(db.DM);
   }

@@ -13,7 +13,7 @@ const Workspace = require("../models/workspace");
 const Channel = require("../models/channel");
 const ChannelChat = require("../models/channelChat");
 const DM = require("../models/dm");
-
+const WorkspaceMember = require("../models/workspaceMember");
 const router = express.Router();
 
 router.get("/workspaces", isLoggedIn, async (req, res, next) => {
@@ -28,6 +28,26 @@ router.get("/workspaces", isLoggedIn, async (req, res, next) => {
             where: { UserId: req.user.id },
             attributes: ["UserId"],
           },
+        },
+      ],
+    });
+    return res.json(workspaces);
+  } catch (error) {
+    next(error);
+  }
+});
+
+//S: 나의 워크스페이스 가져오기
+router.get("/workspaces/:id", isLoggedIn, async (req, res, next) => {
+  try {
+    console.log("⛔⛔⛔⛔⛔REQ", req.params.id);
+    const workspaces = await Workspace.findAll({
+      attributes: ["name", "url", "id"],
+      include: [
+        {
+          model: WorkspaceMember,
+          where: { UserId: req.params.id },
+          required: true,
         },
       ],
     });
