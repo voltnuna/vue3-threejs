@@ -13,6 +13,7 @@
           </div>
         </div>
       </div>
+      <ThreeScene />
     </div>
   </div>
 </template>
@@ -22,6 +23,8 @@ import { onMounted, ref, watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 import { useUserStore } from "@stores/userStore";
 import { useWsStore } from "@stores/wsStore";
+import ThreeScene from "@components/ThreeScene/ThreeScene.vue";
+
 const userStore = useUserStore();
 
 const workspaceList = ref([]);
@@ -46,8 +49,8 @@ const laboratories = ref([
 ]);
 
 onMounted(() => {
-  console.log("explore page", userStore.id.value);
-  userStore.id.value && userStore.myWorkspace(userStore.id.value);
+  console.log("explore page", userStore.id);
+  userStore.id && userStore.myWorkspace(userStore.id);
 });
 </script>
 
@@ -79,7 +82,7 @@ onMounted(() => {
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  overflow-y: scroll;
+  overflow-y: auto;
   align-items: flex-start;
 
   .laboratory {
