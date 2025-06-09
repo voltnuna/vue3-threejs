@@ -19,18 +19,11 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watchEffect } from "vue";
-import { storeToRefs } from "pinia";
+import { onMounted, ref } from "vue";
 import { useUserStore } from "@stores/userStore";
-import { useWsStore } from "@stores/wsStore";
 import ThreeScene from "@components/ThreeScene/ThreeScene.vue";
 
 const userStore = useUserStore();
-
-const workspaceList = ref([]);
-
-const laborName = ref("");
-const laborDesc = ref("");
 
 // Dummy
 const laboratories = ref([
@@ -55,16 +48,6 @@ onMounted(() => {
 </script>
 
 <style lang="scss" scoped>
-.container {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-direction: column;
-  //grid-template-rows: repeat(3, minmax(100px, auto));
-  //background-color: rgba(11, 19, 43, 0.5);
-}
 .bigtitle {
   display: block;
   width: 100%;

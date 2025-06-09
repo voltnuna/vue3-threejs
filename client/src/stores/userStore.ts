@@ -13,7 +13,7 @@ export const useUserStore = defineStore(
     const email = ref("");
     const auth = ref(false);
     const workspaces = ref<IWorkspace[]>([]);
-
+    const loginErr = ref("");
     const clearUser = () => {
       id.value = 0;
       nickname.value = "";
@@ -81,9 +81,9 @@ export const useUserStore = defineStore(
         })
         .catch((err) => {
           //          console.log("@로그인 실패", err.message);
+          loginErr.value = err.response.data;
           console.dir(err);
         });
-      return;
     };
 
     const logout = async () => {
@@ -122,6 +122,7 @@ export const useUserStore = defineStore(
       email,
       auth,
       myWorkspace,
+      loginErr,
     };
   },
   {

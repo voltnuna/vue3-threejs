@@ -108,11 +108,13 @@ const handleSubmit = () => {
 .modal {
   position: fixed;
   width: 40rem;
-  order: 1;
   border: 1px solid #615f5f;
   border-radius: 0.7rem;
   overflow: hidden;
   top: 25%;
+  z-index: 100;
+  background-color: #fff;
+
   left: calc(50% - 20rem);
   box-shadow: 2px 3px 8px #a3a1a1;
   &-head {

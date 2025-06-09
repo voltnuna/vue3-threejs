@@ -40,7 +40,7 @@ router.get("/workspaces", isLoggedIn, async (req, res, next) => {
 //S: 나의 워크스페이스 가져오기
 router.get("/workspaces/:id", isLoggedIn, async (req, res, next) => {
   try {
-    console.log("⛔⛔⛔⛔⛔REQ", req.params.id);
+    console.log("⛔Workspace Id:", req.params.id);
     const workspaces = await Workspace.findAll({
       attributes: ["name", "url", "id"],
       include: [

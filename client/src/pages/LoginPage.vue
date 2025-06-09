@@ -7,7 +7,7 @@
           type="email"
           v-model="email"
           placeholder="email address"
-          class="input input-md"
+          :class="['input', 'input-md', { errorform: emptyErr }]"
           autocomplete="username"
         />
       </div>
@@ -16,11 +16,15 @@
           type="password"
           v-model="password"
           placeholder="password"
-          class="input input-md"
           autocomplete="current-password"
+          :class="['input', 'input-md', { errorform: emptyErr }]"
         />
       </div>
-      <button type="submit">LOGIN</button>
+      <div v-if="emptyErr" class="error-msg">아이디, 패스워드를 입력하세요</div>
+      <div v-if="loginErr" class="error-msg">
+        {{ userStore.loginErr }}
+      </div>
+      <button type="submit">로그인</button>
       <router-link to="/signup">회원가입하러가기</router-link>
     </form>
   </div>
@@ -35,6 +39,26 @@ const router = useRouter();
 const userStore = useUserStore();
 const email = ref("");
 const password = ref("");
+const emptyErr = ref(false);
+const loginErr = ref(false);
+
+const onSubmitEvent = () => {
+  if (email.value !== "" && password.value !== "") {
+    onlogin();
+  } else {
+    emptyErr.value = true;
+  }
+};
+
+const onlogin = async () => {
+  await userStore.login(email.value, password.value).then(() => {
+    if (userStore.auth) {
+      userStore.auth && router.push("/workspaces/general");
+    } else {
+      emptyErr.value = true;
+    }
+  });
+};
 
 onMounted(() => {
   userStore.auth && router.push("/workspaces/general");
@@ -46,17 +70,6 @@ onMounted(() => {
     }
   );
 });
-
-const onSubmitEvent = async () => {
-  await userStore
-    .login(email.value, password.value)
-    .then(() => {
-      router.push("/workspaces/general");
-    })
-    .catch(() => {
-      alert("로그인 실패");
-    });
-};
 </script>
 
 <style scoped lang="scss">
@@ -84,7 +97,9 @@ const onSubmitEvent = async () => {
       width: 30rem;
       padding: 1.1rem;
       font-size: 1.8rem;
-      border: 1px solid #615f5f;
+      &:not(&.errorform) {
+        border: 1px solid #615f5f;
+      }
     }
   }
   button {
@@ -96,6 +111,19 @@ const onSubmitEvent = async () => {
     background-color: #0f0f0f;
     color: #fff;
     @include display-flex(inline-flex, center);
+  }
+}
+.error-msg {
+  color: red;
+  margin: 0.75rem 0;
+  font-weight: 600;
+}
+.errorform {
+  border: 2px solid rgba(255, 0, 0, 0.493);
+  box-shadow: 0px 0px 5px 1px #ff000050;
+  &::placeholder {
+    font-weight: lighter;
+    /* color: #c60102; */
   }
 }
 </style>

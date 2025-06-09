@@ -57,7 +57,7 @@
 
 <script setup lang="ts" scoped>
 //S: import lib
-import { onMounted, ref, watchEffect } from "vue";
+import { onMounted, ref, watchEffect, watch } from "vue";
 import { storeToRefs } from "pinia";
 //S: import store
 import { useUserStore } from "@stores/userStore";
@@ -65,11 +65,14 @@ import { useWsStore } from "@stores/wsStore";
 import { useChnStore } from "@stores/channelStore";
 import { useMemberStore } from "@stores/memberStore";
 //S: import component
-import Modal from "@/components/Modal.vue";
 import NaviListItem from "@/components/NaviListItem.vue";
+import Modal from "@/components/Modal.vue";
 
 import { useRoute } from "vue-router";
 const route = useRoute();
+
+import { useRouter } from "vue-router";
+//const router = useRouter();
 
 //S: declare ref val
 const wsName = ref("");
@@ -94,7 +97,9 @@ const onCloseChnModal = () => (chnModal.value = false);
 const onOpenChnModal = () => (chnModal.value = true);
 
 const onCloseMemModal = () => (memberModal.value = false);
-const onOpenMemModal = () => (memberModal.value = true);
+const onOpenMemModal = () => {
+  memberModal.value = true;
+};
 //E:Modal Control
 
 const onCreateWs = (name: string, url: string) => {
@@ -117,7 +122,14 @@ const onInviteMember = () => {
 
 onMounted(() => {
   userStore.auth && wsStore.fetchWorkspaces();
-  //🔴BUG🔴: 로그인 이후 첫 랜더링 시 워크스페이스 목록 못 불러오는 이슈 있음
+  watch(
+    () => userStore.auth,
+    () => {
+      if (userStore.auth) {
+        wsStore.fetchWorkspaces();
+      }
+    }
+  );
 });
 
 //router 변경될 때마다 param 값 추출

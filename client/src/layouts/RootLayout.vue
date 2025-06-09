@@ -10,7 +10,7 @@
 import NaviBar from "@layouts/elements/NaviBar.vue";
 import Header from "@layouts/elements/Header.vue";
 import { useRouter } from "vue-router";
-import { onMounted } from "vue";
+import { onMounted, watch } from "vue";
 import { useUserStore } from "@stores/userStore";
 
 const userStore = useUserStore();
@@ -21,7 +21,13 @@ const props = defineProps<{
 }>();
 
 onMounted(() => {
-  !userStore.auth.value && router.push("/login");
+  !userStore.auth && router.push("/login");
+  watch(
+    () => userStore.auth,
+    () => {
+      userStore.auth && router.push("/login");
+    }
+  );
 });
 </script>
 

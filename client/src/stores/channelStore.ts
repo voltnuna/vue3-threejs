@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const useChnStore = defineStore("channels", () => {
   const channels = ref<IChannel[]>();
-  const channel = ref<IChannel[]>();
+  const channel = ref<IChannel>();
 
   //### S: Channel
   const fetchChannels = async (wsname: string) => {
