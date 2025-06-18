@@ -1,10 +1,15 @@
 import { fileURLToPath, URL } from "node:url";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
+import { templateCompilerOptions } from "@tresjs/core";
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue({
+      ...templateCompilerOptions,
+    }),
+  ],
   css: {
     preprocessorOptions: {
       //자주 쓰는 변수,mixin 등을 전역scss로 설정할 때

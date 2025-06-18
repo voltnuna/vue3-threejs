@@ -1,7 +1,23 @@
-<template></template>
-
-<script setup lang="ts">
+<script lang="ts" setup>
 import { TresCanvas } from "@tresjs/core";
 </script>
 
-<style scoped lang="scss"></style>
+<template>
+  <TresCanvas>
+    <!-- Your scene goes here -->
+  </TresCanvas>
+</template>
+
+<style>
+html,
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+#app {
+  height: 100%;
+  width: 100%;
+}
+</style>
