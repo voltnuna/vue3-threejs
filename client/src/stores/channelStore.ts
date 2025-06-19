@@ -46,6 +46,23 @@ export const useChnStore = defineStore("channels", () => {
       });
   };
 
+  const inviteMember = async (
+    wsname: string,
+    channel: string,
+    email: string
+  ) => {
+    await axios
+      .post(`/api/workspaces/${wsname}/channels/${channel}/members`, {
+        email: email,
+      })
+      .then((res) => {
+        console.log("", res.data);
+      })
+      .catch((err) => {
+        console.dir("###채널 멤버초대 실패", err.response.data);
+      });
+  };
+
   //### E: Channel
 
   return {
@@ -54,5 +71,6 @@ export const useChnStore = defineStore("channels", () => {
     fetchChannels,
     createChannel,
     getChannel,
+    inviteMember,
   };
 });

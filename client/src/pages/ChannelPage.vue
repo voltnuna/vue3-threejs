@@ -1,33 +1,62 @@
 <template>
   <div class="container">
-    <div class="head-area">#Channel-Name</div>
+    <div class="head-area">
+      # {{ chnName }} 채널
+      <button type="button" @click.prevent="onOpenMemModal">멤버 초대</button>
+    </div>
     <div class="body-area">
-      <div class="chats">
-        <div class="chat">
-          <div>
+      <div class="chat-wrap">
+        <!-- ### S: -->
+        <div
+          v-for="item in chats"
+          :key="item.id"
+          :class="[
+            { 'chat other': item.User.nickname !== useUser.nickname },
+            { 'chat me': item.User.nickname === useUser.nickname },
+          ]"
+        >
+          <div class="chat__userinfo">
             <img
-              :src="gravatar.url('tester', { s: '30px', d: 'robohash' })"
+              :src="gravatar.url(item.User.email, { s: '40px', d: 'robohash' })"
               alt=""
             />
+            <strong>{{ item.User.nickname }}</strong>
           </div>
-          <div>
-            <strong>닉네임</strong>
-            <span>작성시간</span>
-            <p>안녕하세요요요요</p>
-            <button type="button" @click.prevent="">스레드보기</button>
+          <div class="chat__content">
+            <p>{{ item.content }}</p>
+            <span>{{ item.createdAt }}</span>
           </div>
         </div>
+        <!-- ### E: -->
       </div>
-      <div class="threads"></div>
     </div>
     <div class="foot-area">
-      <ul>
+      <ul class="utils__txtcontrol">
         <li><button type="button" @click.prevent>Bold</button></li>
         <li><button type="button" @click.prevent>Italic</button></li>
         <li><button type="button" @click.prevent>Strikethrough</button></li>
         <li><button type="button" @click.prevent>Imoji</button></li>
       </ul>
-      <textarea name="chatbox" id="chatbox" row="5" col="50"></textarea>
+      <form class="utils__chats" @submit.prevent="onSubmitChats">
+        <textarea
+          v-model="chatMessage"
+          @keypress.enter="onSubmitChats"
+          name="chatbox"
+          id="chatbox"
+          row="5"
+          col="45"
+        ></textarea>
+        <button type="submit">전송</button>
+      </form>
+    </div>
+
+    <!-- ### S: Invite Channel Member Modal -->
+    <div v-if="memberModal">
+      <Modal
+        modal-type="member"
+        @modal-close="onCloseMemModal"
+        @add-member="onInviteMember"
+      />
     </div>
   </div>
 </template>
@@ -36,19 +65,45 @@
 import { ref, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useChnStore } from "@stores/channelStore";
-import { storeToRefs } from "pinia";
+import { useChatStore } from "@stores/chatStore";
+import { useUserStore } from "@stores/userStore";
+import Modal from "@components/Modal.vue";
 import gravatar from "gravatar";
+import { storeToRefs } from "pinia";
 
+const useChat = useChatStore();
+const useUser = useUserStore();
 const useChn = useChnStore();
-const { channel } = storeToRefs(useChn);
+const { chats } = storeToRefs(useChat);
 
 const route = useRoute();
 const wsName = ref("");
 const chnName = ref("");
+const chatMessage = ref("");
+
+// ### S: Modal
+const memberModal = ref(false);
+const onCloseMemModal = () => (memberModal.value = false);
+const onOpenMemModal = () => (memberModal.value = true);
+// ### E: Modal
+
+const onInviteMember = (email: string) => {
+  useChn.inviteMember(wsName.value, chnName.value, email).then(() => {
+    memberModal.value = false;
+  });
+};
+
+const onSubmitChats = () => {
+  useChat.sendChat(wsName.value, chnName.value, chatMessage.value).then(() => {
+    chatMessage.value = "";
+  });
+};
 
 watchEffect(() => {
   let paramChn = route.params.channel as string;
   let paramWs = route.params.workspace as string;
+  wsName.value = paramWs;
+  chnName.value = paramChn;
 
   if (!paramChn || !paramWs) {
     const fullpath = route.fullPath.split("/");
@@ -56,9 +111,11 @@ watchEffect(() => {
     paramWs = fullpath[2]; // ['','workspaces','general','channel',':channel']
     wsName.value = paramWs;
     chnName.value = paramChn;
+    useChat.getChat(wsName.value, chnName.value);
   }
   if (paramChn) {
     useChn.getChannel(paramWs, paramChn).then(() => {});
+    useChat.getChat(wsName.value, chnName.value);
   } else {
     console.log("No workspace name found.");
   }
@@ -69,28 +126,79 @@ watchEffect(() => {
 .head-area {
   width: 100%;
   height: 5%;
-  background-color: yellow;
 }
 .body-area {
   width: 100%;
-  height: 80%;
+  height: 75%;
   overflow-y: auto;
   padding: 2rem;
   background-color: #fff;
   line-height: 1.5;
+  .chat {
+    display: flex;
+    align-items: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #f2f2f2;
+    &-wrap {
+    }
+    &__content {
+      max-width: 70rem;
+      background: rgba(99, 230, 191, 0.624);
+      padding: 1.2rem 1.2rem;
+      border-radius: 7px;
+      font-size: 1.3rem;
+      line-height: 1.25;
+      p {
+        max-width: 70rem;
+        word-break: break-all;
+      }
+      span {
+        font-size: 1.1rem;
+      }
+    }
+    &.me {
+      .chat__content {
+        background: rgba(226, 110, 116, 0.397);
+      }
+    }
+    &.other {
+    }
+    &__userinfo {
+      width: 5rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      flex-direction: column;
+      font-size: 1.3rem;
+      margin-right: 1.5rem;
+    }
+  }
 }
 .foot-area {
   width: 100%;
-  height: 15%;
+  height: 20%;
   border-top: 2px solid #ddd;
   textarea {
-    width: 90%;
+    width: 80%;
+    height: 13rem;
+  }
+  button[type="submit"] {
+    @include display-flex(inline-flex, center, center);
+    width: 10rem;
     height: 10rem;
+    background-color: #ddd;
+  }
+  .utils__chats {
+    @include display-flex(flex, flex-start, center);
+    background-color: red;
+  }
+  .utils__txtcontrol {
+    @include display-flex(inline-flex, flex-start, center);
+    width: 100%;
+    font-size: 1.3rem;
   }
 }
 .profileimg {
-  // @include display-flex(inline-flex, center, center);
-  //width: 100%;
   color: #fff;
   padding: 0.5rem 0.5rem;
   cursor: pointer;
