@@ -5,13 +5,13 @@
       <button type="button" @click.prevent="onOpenMemModal">멤버 초대</button>
     </div>
     <div class="body-area">
+      <!-- ### S: -->
       <div class="chat-wrap">
-        <!-- ### S: -->
         <div
           v-for="item in chats"
           :key="item.id"
           :class="[
-            { 'chat other': item.User.nickname !== useUser.nickname },
+            { chat: item.User.nickname !== useUser.nickname },
             { 'chat me': item.User.nickname === useUser.nickname },
           ]"
         >
@@ -27,8 +27,8 @@
             <span>{{ item.createdAt }}</span>
           </div>
         </div>
-        <!-- ### E: -->
       </div>
+      <!-- ### E: -->
     </div>
     <div class="foot-area">
       <ul class="utils__txtcontrol">
@@ -136,18 +136,14 @@ watchEffect(() => {
   line-height: 1.5;
   .chat {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     padding: 1rem 0;
-    border-bottom: 1px solid #f2f2f2;
-    &-wrap {
-    }
     &__content {
       max-width: 70rem;
       background: rgba(99, 230, 191, 0.624);
       padding: 1.2rem 1.2rem;
       border-radius: 7px;
       font-size: 1.3rem;
-      line-height: 1.25;
       p {
         max-width: 70rem;
         word-break: break-all;
@@ -155,13 +151,6 @@ watchEffect(() => {
       span {
         font-size: 1.1rem;
       }
-    }
-    &.me {
-      .chat__content {
-        background: rgba(226, 110, 116, 0.397);
-      }
-    }
-    &.other {
     }
     &__userinfo {
       width: 5rem;
@@ -171,6 +160,18 @@ watchEffect(() => {
       flex-direction: column;
       font-size: 1.3rem;
       margin-right: 1.5rem;
+    }
+    &.me {
+      justify-content: flex-start;
+      flex-direction: row-reverse;
+      .chat__userinfo {
+        align-items: flex-start;
+        margin-right: 0;
+        margin-left: 1.5rem;
+      }
+      .chat__content {
+        background: rgba(226, 110, 116, 0.397);
+      }
     }
   }
 }
