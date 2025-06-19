@@ -10,7 +10,6 @@
       @click.prevent="onOpenWsModal"
     ></button>
 
-    <!-- S: Channel List -->
     <div class="channel-bar">
       <div class="title-wrap__lg">
         <h2 class="channel-bar__title">{{ wsName }}</h2>
@@ -19,39 +18,49 @@
       <div class="channel-bar__chn">
         <div class="title-wrap__md">
           <h3>채널 리스트</h3>
-          <button class="" type="button" @click.prevent="onOpenChnModal">
+          <button type="button" @click.prevent="onOpenChnModal">
             채널추가
           </button>
         </div>
+        <!-- S: Channel List -->
         <div v-for="(chn, idx) in channels" :key="idx">
           <router-link :to="`/workspaces/${wsName}/channel/${chn.name}`">
             <span class="router-link"> <span>#</span>{{ chn.name }}</span>
           </router-link>
         </div>
+        <!-- S: -->
+        <div class="online">
+          <ul>
+            <li>
+              <span class="online-signal">초록불</span>
+              <span class="online-name">지금 온라인인 사람</span>
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
-  </div>
-  <!-- S: Modal List -->
-  <div v-if="wsModal">
-    <Modal
-      modal-type="workspace"
-      @modal-close="onCloseWsModal"
-      @add-workspace="onCreateWs"
-    />
-  </div>
-  <div v-if="chnModal">
-    <Modal
-      modal-type="channel"
-      @modal-close="onCloseChnModal"
-      @add-channel="onCreateChn"
-    />
-  </div>
-  <div v-if="memberModal">
-    <Modal
-      modal-type="member"
-      @modal-close="onCloseMemModal"
-      @add-member="onInviteMember"
-    />
+    <!-- S: Modal List -->
+    <div v-if="wsModal">
+      <Modal
+        modal-type="workspace"
+        @modal-close="onCloseWsModal"
+        @add-workspace="onCreateWs"
+      />
+    </div>
+    <div v-if="chnModal">
+      <Modal
+        modal-type="channel"
+        @modal-close="onCloseChnModal"
+        @add-channel="onCreateChn"
+      />
+    </div>
+    <div v-if="memberModal">
+      <Modal
+        modal-type="member"
+        @modal-close="onCloseMemModal"
+        @add-member="onInviteMember"
+      />
+    </div>
   </div>
 </template>
 
@@ -70,9 +79,6 @@ import Modal from "@/components/Modal.vue";
 
 import { useRoute } from "vue-router";
 const route = useRoute();
-
-import { useRouter } from "vue-router";
-//const router = useRouter();
 
 //S: declare ref val
 const wsName = ref("");
@@ -114,26 +120,28 @@ const onCreateChn = (name: string) => {
   });
 };
 
-const onInviteMember = () => {
-  memberStore.inviteWsMember(wsName.value).then(() => {
+const onInviteMember = (email: string) => {
+  memberStore.inviteWsMember(wsName.value, email).then(() => {
     onCloseMemModal();
   });
 };
 
-onMounted(() => {
-  userStore.auth && wsStore.fetchWorkspaces();
-  watch(
-    () => userStore.auth,
-    () => {
-      if (userStore.auth) {
-        wsStore.fetchWorkspaces();
-      }
-    }
-  );
-});
+// onMounted(() => {
+//   userStore.auth && wsStore.fetchWorkspaces();
+//   watch(
+//     () => userStore.auth,
+//     () => {
+//       if (userStore.auth) {
+//         wsStore.fetchWorkspaces();
+//       }
+//     }
+//   );
+// });
 
 //router 변경될 때마다 param 값 추출
 watchEffect(() => {
+  userStore.auth && wsStore.fetchWorkspaces();
+
   let workspace = route.params.workspace as string;
   if (!workspace) {
     // fallback: route.param이 없으면 fullPath에서 추출
@@ -141,7 +149,6 @@ watchEffect(() => {
     workspace = parts[2]; // ['','workspaces','general']
     wsName.value = workspace;
   }
-
   if (workspace) {
     chnStore.fetchChannels(workspace);
   } else {

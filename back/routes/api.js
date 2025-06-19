@@ -235,7 +235,7 @@ router.get(
               model: Channel,
             },
           ],
-          order: [["createdAt", "DESC"]],
+          order: [["createdAt", "ASC"]],
           limit: parseInt(req.query.perPage, 10),
           offset: req.query.perPage * (req.query.page - 1),
         })

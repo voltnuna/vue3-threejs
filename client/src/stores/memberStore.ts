@@ -1,11 +1,12 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
-import type { IUser } from "@/types/db";
+import type { IUser, IUserWithOnline } from "@/types/db";
 import axios from "axios";
 
 export const useMemberStore = defineStore("member", () => {
   const wsMembers = ref<IUser[]>();
   const wsMember = ref<IUser[]>();
+  const onlineMember = ref<IUserWithOnline[]>();
 
   const getMember = async (wsname: string, memberId: string) => {
     await axios
@@ -33,9 +34,9 @@ export const useMemberStore = defineStore("member", () => {
       });
   };
 
-  const inviteWsMember = async (wsname: string) => {
+  const inviteWsMember = async (wsname: string, email: string) => {
     await axios
-      .post(`/api/workspaces/${wsname}/members`, { email: "" })
+      .post(`/api/workspaces/${wsname}/members`, { email: email })
       .then((res) => {
         console.log(res.data);
       })
@@ -57,6 +58,8 @@ export const useMemberStore = defineStore("member", () => {
       });
   };
 
+  const getOnlineMember = async () => {};
+
   return {
     wsMembers,
     wsMember,
@@ -64,5 +67,6 @@ export const useMemberStore = defineStore("member", () => {
     removeMember,
     getMember,
     getAllMembers,
+    getOnlineMember,
   };
 });

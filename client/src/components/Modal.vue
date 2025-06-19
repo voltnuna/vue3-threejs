@@ -1,5 +1,6 @@
 <template>
   <div class="modal form">
+    <!-- ### S: Add Workspace-->
     <div v-if="modalType === 'workspace'">
       <form @submit.prevent="handleSubmit">
         <div class="modal-head">
@@ -31,7 +32,7 @@
         </div>
       </form>
     </div>
-    <!--  -->
+    <!-- ### S: Add Channel -->
     <div v-else-if="modalType === 'channel'">
       <form @submit.prevent="handleSubmit">
         <div class="modal-head">
@@ -49,19 +50,13 @@
               v-model="name"
             />
           </div>
-          <!-- <div class="inputwrap">
-            <select>
-              <option value="">Public</option>
-              <option value="">Private</option>
-            </select>
-          </div> -->
         </div>
         <div class="modal-foot">
           <button type="submit">생성하기</button>
         </div>
       </form>
     </div>
-    <!--  -->
+    <!-- ### S: Add Member-->
     <div v-else-if="modalType === 'member'">
       <form @submit.prevent="handleSubmit">
         <div class="modal-head">
@@ -76,7 +71,7 @@
               type="text"
               placeholder="Member's Email"
               class="input input-lg"
-              v-model="name"
+              v-model="email"
             />
           </div>
         </div>
@@ -96,11 +91,18 @@ defineProps<{
 import { ref } from "vue";
 const name = ref("");
 const url = ref("");
+const email = ref("");
 
-const emit = defineEmits(["modalClose", "addWorkspace", "addChannel"]);
+const emit = defineEmits([
+  "modalClose",
+  "addWorkspace",
+  "addChannel",
+  "addMember",
+]);
 const handleSubmit = () => {
   emit("addWorkspace", name.value, url.value);
   emit("addChannel", name.value);
+  emit("addMember", email.value);
 };
 </script>
 

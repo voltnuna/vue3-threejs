@@ -55,14 +55,12 @@ const onlogin = async () => {
     if (userStore.auth) {
       userStore.auth && router.push("/workspaces/general");
     } else {
-      emptyErr.value = true;
+      loginErr.value = true;
     }
   });
 };
 
 onMounted(() => {
-  userStore.auth && router.push("/workspaces/general");
-
   watch(
     () => userStore.auth,
     () => {
