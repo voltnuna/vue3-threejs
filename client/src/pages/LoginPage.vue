@@ -31,7 +31,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, watchEffect } from "vue";
 import { useUserStore } from "@stores/userStore.ts";
 import { useRouter } from "vue-router";
 
@@ -41,6 +41,8 @@ const email = ref("");
 const password = ref("");
 const emptyErr = ref(false);
 const loginErr = ref(false);
+
+watchEffect(() => userStore.auth && router.push("/workspaces/general"));
 
 const onSubmitEvent = () => {
   if (email.value !== "" && password.value !== "") {
@@ -59,15 +61,6 @@ const onlogin = async () => {
     }
   });
 };
-
-onMounted(() => {
-  watch(
-    () => userStore.auth,
-    () => {
-      userStore.auth && router.push("/workspaces/general");
-    }
-  );
-});
 </script>
 
 <style scoped lang="scss">

@@ -31,9 +31,9 @@
         <!-- S: -->
         <div class="online">
           <ul>
-            <li>
-              <span class="online-signal">초록불</span>
-              <span class="online-name">지금 온라인인 사람</span>
+            <li v-for="(member, idx) in onlineMember" :key="idx">
+              <span class="online-signal"></span>
+              <span class="online-name">{{ member }}</span>
             </li>
           </ul>
         </div>
@@ -64,9 +64,9 @@
   </div>
 </template>
 
-<script setup lang="ts" scoped>
+<script setup lang="ts">
 //S: import lib
-import { onMounted, ref, watchEffect, watch } from "vue";
+import { ref, watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 //S: import store
 import { useUserStore } from "@stores/userStore";
@@ -78,10 +78,16 @@ import NaviListItem from "@/components/NaviListItem.vue";
 import Modal from "@/components/Modal.vue";
 
 import { useRoute } from "vue-router";
-const route = useRoute();
+import { Socket } from "socket.io-client";
+import { useSkStore } from "@stores/useSocketStore";
+const socket = useSkStore();
+const mySocket = ref<Socket | undefined>(undefined);
 
+const route = useRoute();
 //S: declare ref val
 const wsName = ref("");
+
+const onlineMember = ref();
 
 const wsModal = ref(false);
 const chnModal = ref(false);
@@ -108,6 +114,38 @@ const onOpenMemModal = () => {
 };
 //E:Modal Control
 
+//onBeforeUnmount(() => socket.disconnect(wsName.value));
+
+//router 변경될 때마다 param 값 추출
+watchEffect(() => {
+  userStore.auth && wsStore.fetchWorkspaces();
+  let workspace = route.params.workspace as string;
+  wsName.value = workspace;
+
+  // ### fallback: route.param이 없으면 fullPath에서 추출
+  if (!workspace) {
+    const parts = route.fullPath.split("/");
+    workspace = parts[2]; // EX) ['','workspaces','general']
+    wsName.value = workspace;
+  }
+
+  if (workspace) {
+    wsName.value = workspace;
+    chnStore.fetchChannels(workspace);
+    mySocket.value = socket.createNameSpace(wsName.value);
+  }
+});
+
+watchEffect(() => {
+  if (userStore.id && chnStore.channels && mySocket?.value?.id) {
+    socket.getOnlineList(wsName.value);
+    onlineMember.value = socket.onlieList;
+  }
+  if (onlineMember.value) {
+    onlineMember.value = onlineMember.value.map((v: any) => v.split("@")[0]);
+  }
+});
+
 const onCreateWs = (name: string, url: string) => {
   wsStore.createWorkspace(name, url).then(() => {
     onCloseWsModal();
@@ -125,36 +163,6 @@ const onInviteMember = (email: string) => {
     onCloseMemModal();
   });
 };
-
-// onMounted(() => {
-//   userStore.auth && wsStore.fetchWorkspaces();
-//   watch(
-//     () => userStore.auth,
-//     () => {
-//       if (userStore.auth) {
-//         wsStore.fetchWorkspaces();
-//       }
-//     }
-//   );
-// });
-
-//router 변경될 때마다 param 값 추출
-watchEffect(() => {
-  userStore.auth && wsStore.fetchWorkspaces();
-
-  let workspace = route.params.workspace as string;
-  if (!workspace) {
-    // fallback: route.param이 없으면 fullPath에서 추출
-    const parts = route.fullPath.split("/");
-    workspace = parts[2]; // ['','workspaces','general']
-    wsName.value = workspace;
-  }
-  if (workspace) {
-    chnStore.fetchChannels(workspace);
-  } else {
-    console.log("No workspace name found.");
-  }
-});
 </script>
 
 <style lang="scss" scoped>
@@ -209,9 +217,6 @@ watchEffect(() => {
         align-items: center;
         margin: 1.5rem 0;
       }
-      div {
-        width: 100%;
-      }
       a {
         display: flex;
         width: 100%;
@@ -246,6 +251,10 @@ watchEffect(() => {
     line-height: 25px;
     font-size: 2rem;
     border-radius: 50%;
+  }
+}
+.online {
+  &-signal {
   }
 }
 </style>

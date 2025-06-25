@@ -87,18 +87,6 @@ const onCloseMemModal = () => (memberModal.value = false);
 const onOpenMemModal = () => (memberModal.value = true);
 // ### E: Modal
 
-const onInviteMember = (email: string) => {
-  useChn.inviteMember(wsName.value, chnName.value, email).then(() => {
-    memberModal.value = false;
-  });
-};
-
-const onSubmitChats = () => {
-  useChat.sendChat(wsName.value, chnName.value, chatMessage.value).then(() => {
-    chatMessage.value = "";
-  });
-};
-
 watchEffect(() => {
   let paramChn = route.params.channel as string;
   let paramWs = route.params.workspace as string;
@@ -117,9 +105,25 @@ watchEffect(() => {
     useChn.getChannel(paramWs, paramChn).then(() => {});
     useChat.getChat(wsName.value, chnName.value);
   } else {
-    console.log("No workspace name found.");
+    //console.log("No workspace name found.");
   }
 });
+
+const onInviteMember = (email: string) => {
+  useChn.inviteMember(wsName.value, chnName.value, email).then(() => {
+    memberModal.value = false;
+  });
+};
+
+const onSubmitChats = () => {
+  if (chatMessage.value !== "") {
+    useChat
+      .sendChat(wsName.value, chnName.value, chatMessage.value)
+      .then(() => {
+        chatMessage.value = "";
+      });
+  }
+};
 </script>
 
 <style scoped lang="scss">
