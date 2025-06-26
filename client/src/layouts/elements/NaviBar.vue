@@ -9,10 +9,9 @@
       class="addBtn lg"
       @click.prevent="onOpenWsModal"
     ></button>
-
     <div class="channel-bar">
       <div class="title-wrap__lg">
-        <h2 class="channel-bar__title">{{ wsName }}</h2>
+        <h2 class="channel-bar__title" :title="`${wsName}`">{{ wsName }}</h2>
         <button type="button" @click.prevent="onOpenMemModal">멤버초대</button>
       </div>
       <div class="channel-bar__chn">
@@ -31,6 +30,7 @@
         <!-- S: -->
         <div class="online">
           <ul>
+            <li>🚀온라인🚀</li>
             <li v-for="(member, idx) in onlineMember" :key="idx">
               <span class="online-signal"></span>
               <span class="online-name">{{ member }}</span>
@@ -61,12 +61,14 @@
         @add-member="onInviteMember"
       />
     </div>
+
+    <div>sdfsdf</div>
   </div>
 </template>
 
 <script setup lang="ts">
 //S: import lib
-import { ref, watchEffect } from "vue";
+import { onBeforeUnmount, ref, watchEffect } from "vue";
 import { storeToRefs } from "pinia";
 //S: import store
 import { useUserStore } from "@stores/userStore";
@@ -114,20 +116,18 @@ const onOpenMemModal = () => {
 };
 //E:Modal Control
 
-//onBeforeUnmount(() => socket.disconnect(wsName.value));
+const socket_disconnect = () => {
+  mySocket?.value?.disconnect();
+  delete mySocket?.value;
+  console.log("소켓끊음");
+};
 
 //router 변경될 때마다 param 값 추출
 watchEffect(() => {
-  userStore.auth && wsStore.fetchWorkspaces();
-  let workspace = route.params.workspace as string;
-  wsName.value = workspace;
+  userStore.auth && wsStore.getMyWorkspace(userStore.id);
 
-  // ### fallback: route.param이 없으면 fullPath에서 추출
-  if (!workspace) {
-    const parts = route.fullPath.split("/");
-    workspace = parts[2]; // EX) ['','workspaces','general']
-    wsName.value = workspace;
-  }
+  const parts = route.fullPath.split("/");
+  let workspace = parts[2]; // EX) ['','workspaces','general']
 
   if (workspace) {
     wsName.value = workspace;
@@ -204,7 +204,10 @@ const onInviteMember = (email: string) => {
       text-transform: capitalize;
       font-size: 3.4rem;
       line-height: 3.4rem;
-      text-align: center;
+      text-align: left;
+      width: 16.5rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     &__chn {
@@ -254,7 +257,18 @@ const onInviteMember = (email: string) => {
   }
 }
 .online {
+  li {
+    margin: 1rem 0;
+  }
   &-signal {
+    display: inline-flex;
+    background-color: #00e104;
+    border-radius: 50%;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    border: 1px solid #00e104a2;
+    box-shadow: 0px 0px 4px #00e104;
   }
 }
 </style>

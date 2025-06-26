@@ -11,7 +11,17 @@ export const useWsStore = defineStore("workspaces", () => {
     await axios
       .get("/api/workspaces", { withCredentials: true })
       .then((res) => {
-        console.log("fetchWorkspaces", res.data);
+        workspaces.value = res.data;
+      })
+      .catch((err) => {
+        console.dir(err);
+      });
+  };
+
+  const getMyWorkspace = async (id: number) => {
+    await axios
+      .get(`/api/workspaces/${id}`, { withCredentials: true })
+      .then((res) => {
         workspaces.value = res.data;
       })
       .catch((err) => {
@@ -37,5 +47,6 @@ export const useWsStore = defineStore("workspaces", () => {
     workspaces,
     fetchWorkspaces,
     createWorkspace,
+    getMyWorkspace,
   };
 });
