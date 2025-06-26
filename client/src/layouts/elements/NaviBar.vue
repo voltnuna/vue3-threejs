@@ -83,6 +83,7 @@ import { useWsStore } from "@stores/wsStore";
 import { useChnStore } from "@stores/channelStore";
 import { useMemberStore } from "@stores/memberStore";
 import { useSkStore } from "@stores/useSocketStore";
+import { usePathStore } from "@stores/usePathStore";
 
 // #################################################  S: import components
 import NaviListItem from "@/components/NaviListItem.vue";
@@ -90,6 +91,7 @@ import Modal from "@/components/Modal.vue";
 
 const route = useRoute();
 
+const usePath = usePathStore();
 const socket = useSkStore();
 const userStore = useUserStore();
 const memberStore = useMemberStore();
@@ -120,14 +122,12 @@ const socket_disconnect = () => {
   delete mySocket?.value;
   console.log("소켓끊음");
 };
-import { usePathStore } from "@stores/usePathStore";
-const usePath = usePathStore();
 
 onMounted(() => {
   watch(
     () => userStore.id,
     () => {
-      // ### S: 그인하면 SOCKET에  LOGIN EMIT
+      // ### S: 로그인하면 SOCKET에  LOGIN EMIT
       if (userStore.id && chnStore.channels && mySocket?.value?.id) {
         console.log("로그인🎃");
         mySocket.value.emit("login", {
