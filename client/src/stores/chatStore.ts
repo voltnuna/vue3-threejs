@@ -29,7 +29,6 @@ export const useChatStore = defineStore("chat", () => {
       )
       .then((res) => {
         chats.value = res.data;
-        console.log("채틴", res.data);
       })
       .catch((err) => {
         console.dir(err);

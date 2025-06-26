@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeMount, onMounted } from "vue";
+import { onMounted } from "vue";
 import router from "./router";
 import RootLayout from "@layouts/RootLayout.vue";
 import { useUserStore } from "@stores/userStore";

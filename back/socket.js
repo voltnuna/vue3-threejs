@@ -18,6 +18,7 @@ module.exports = (server, app) => {
     // broadcast to all clients in the given sub-namespace
     socket.emit("hello", socket.nsp.name);
     socket.on("login", ({ id, channels }) => {
+      console.log("🎃🎃login🎃🎃", socket.nsp.name);
       onlineMap[socket.nsp.name][socket.id] = id;
       newNamespace.emit(
         "onlineList",
@@ -28,6 +29,7 @@ module.exports = (server, app) => {
       });
     });
     socket.on("disconnect", () => {
+      console.log("🎁🎁disconnet🎁🎁", socket.nsp.name);
       delete onlineMap[socket.nsp.name][socket.id];
       newNamespace.emit(
         "onlineList",

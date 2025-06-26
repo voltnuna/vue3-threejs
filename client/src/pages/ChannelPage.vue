@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="head-area">
-      # {{ chnName }} 채널
+      #{{ chnName }} 채널
       <button type="button" @click.prevent="onOpenMemModal">멤버 초대</button>
     </div>
     <div class="body-area">
@@ -16,8 +16,9 @@
           ]"
         >
           <div class="chat__userinfo">
+            <!-- robohash, wavatar, color -->
             <img
-              :src="gravatar.url(item.User.email, { s: '40px', d: 'robohash' })"
+              :src="gravatar.url(item.User.email, { s: '50px', d: 'retro' })"
               alt=""
             />
             <strong>{{ item.User.nickname }}</strong>
@@ -32,10 +33,15 @@
     </div>
     <div class="foot-area">
       <ul class="utils__txtcontrol">
-        <li><button type="button" @click.prevent>Bold</button></li>
-        <li><button type="button" @click.prevent>Italic</button></li>
-        <li><button type="button" @click.prevent>Strikethrough</button></li>
-        <li><button type="button" @click.prevent>Imoji</button></li>
+        <li>
+          <button type="button" @click.prevent="">Bold</button>
+        </li>
+        <li>
+          <button type="button" @click.prevent="">Italic</button>
+        </li>
+        <li>
+          <button type="button" @click.prevent="">Strikethrough</button>
+        </li>
       </ul>
       <form class="utils__chats" @submit.prevent="onSubmitChats">
         <textarea
@@ -102,10 +108,8 @@ watchEffect(() => {
     useChat.getChat(wsName.value, chnName.value);
   }
   if (paramChn) {
-    useChn.getChannel(paramWs, paramChn).then(() => {});
+    useChn.getChannel(paramWs, paramChn);
     useChat.getChat(wsName.value, chnName.value);
-  } else {
-    //console.log("No workspace name found.");
   }
 });
 
@@ -138,70 +142,82 @@ const onSubmitChats = () => {
   padding: 2rem;
   background-color: #fff;
   line-height: 1.5;
-  .chat {
-    display: flex;
-    align-items: flex-start;
-    padding: 1rem 0;
-    &__content {
+}
+
+.chat {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem 0;
+  &__content {
+    max-width: 70rem;
+    background: rgba(99, 230, 191, 0.624);
+    padding: 1.2rem 1.2rem;
+    border-radius: 7px;
+    font-size: 1.3rem;
+    p {
       max-width: 70rem;
-      background: rgba(99, 230, 191, 0.624);
-      padding: 1.2rem 1.2rem;
-      border-radius: 7px;
-      font-size: 1.3rem;
-      p {
-        max-width: 70rem;
-        word-break: break-all;
-      }
-      span {
-        font-size: 1.1rem;
-      }
+      word-break: break-all;
     }
-    &__userinfo {
-      width: 5rem;
-      display: flex;
-      justify-content: center;
+    span {
+      font-size: 1.1rem;
+    }
+  }
+  &__userinfo {
+    width: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex-direction: column;
+    font-size: 1.3rem;
+    margin-right: 1.5rem;
+    overflow: hidden;
+    word-wrap: break-word;
+    img {
+      border-radius: 50%;
+    }
+  }
+  &.me {
+    justify-content: flex-start;
+    flex-direction: row-reverse;
+    .chat__userinfo {
       align-items: flex-start;
-      flex-direction: column;
-      font-size: 1.3rem;
-      margin-right: 1.5rem;
+      margin-right: 0;
+      margin-left: 1.5rem;
     }
-    &.me {
-      justify-content: flex-start;
-      flex-direction: row-reverse;
-      .chat__userinfo {
-        align-items: flex-start;
-        margin-right: 0;
-        margin-left: 1.5rem;
-      }
-      .chat__content {
-        background: rgba(226, 110, 116, 0.397);
-      }
+    .chat__content {
+      background: rgba(226, 110, 116, 0.397);
     }
   }
 }
+
 .foot-area {
   width: 100%;
   height: 20%;
   border-top: 2px solid #ddd;
+}
+.utils__chats {
+  @include display-flex(flex, center, center);
   textarea {
-    width: 80%;
+    width: 90%;
     height: 13rem;
+    resize: none;
+    border: 1px solid silver;
+    border-right: none;
   }
   button[type="submit"] {
     @include display-flex(inline-flex, center, center);
-    width: 10rem;
-    height: 10rem;
+    width: 8%;
+    height: 13.5rem;
+    border: 1px solid silver;
     background-color: #ddd;
   }
-  .utils__chats {
-    @include display-flex(flex, flex-start, center);
-    background-color: red;
-  }
-  .utils__txtcontrol {
-    @include display-flex(inline-flex, flex-start, center);
-    width: 100%;
-    font-size: 1.3rem;
-  }
+}
+.utils__txtcontrol {
+  @include display-flex(inline-flex, flex-start, center);
+  width: 100%;
+  height: 2rem;
+  font-size: 1.3rem;
+  padding-left: 1rem;
 }
 .profileimg {
   color: #fff;

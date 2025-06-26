@@ -33,7 +33,6 @@ export const useUserStore = defineStore(
             console.log("@fetchUser_사용자 인증 실패", auth.value);
           } else {
             auth.value = true;
-            console.log("@fetchUser_사용자 인증 성공", auth.value);
           }
         })
         .catch((err) => {
@@ -101,17 +100,6 @@ export const useUserStore = defineStore(
     };
     //<--- E: actions --->
 
-    const myWorkspace = async (id: number) => {
-      await axios
-        .get(`/api/workspaces/${id}`, { withCredentials: true })
-        .then((res) => {
-          workspaces.value = res.data;
-        })
-        .catch((err) => {
-          console.dir(err);
-        });
-    };
-
     return {
       fetchUser,
       logout,
@@ -121,7 +109,6 @@ export const useUserStore = defineStore(
       nickname,
       email,
       auth,
-      myWorkspace,
       loginErr,
     };
   },

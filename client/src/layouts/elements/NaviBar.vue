@@ -11,7 +11,9 @@
     ></button>
     <div class="channel-bar">
       <div class="title-wrap__lg">
-        <h2 class="channel-bar__title" :title="`${wsName}`">{{ wsName }}</h2>
+        <h2 class="channel-bar__title" :title="`${usePath.current_ws}`">
+          {{ usePath.current_ws }}
+        </h2>
         <button type="button" @click.prevent="onOpenMemModal">멤버초대</button>
       </div>
       <div class="channel-bar__chn">
@@ -23,7 +25,9 @@
         </div>
         <!-- S: Channel List -->
         <div v-for="(chn, idx) in channels" :key="idx">
-          <router-link :to="`/workspaces/${wsName}/channel/${chn.name}`">
+          <router-link
+            :to="`/workspaces/${usePath.current_ws}/channel/${chn.name}`"
+          >
             <span class="router-link"> <span>#</span>{{ chn.name }}</span>
           </router-link>
         </div>
@@ -67,41 +71,38 @@
 </template>
 
 <script setup lang="ts">
-//S: import lib
-import { onBeforeUnmount, ref, watchEffect } from "vue";
+// #################################################  S: import Libraries
+import { ref, watchEffect, watch, onMounted } from "vue";
 import { storeToRefs } from "pinia";
-//S: import store
+import { useRoute } from "vue-router";
+import { Socket } from "socket.io-client";
+
+// #################################################  S: import Stores
 import { useUserStore } from "@stores/userStore";
 import { useWsStore } from "@stores/wsStore";
 import { useChnStore } from "@stores/channelStore";
 import { useMemberStore } from "@stores/memberStore";
-//S: import component
+import { useSkStore } from "@stores/useSocketStore";
+
+// #################################################  S: import components
 import NaviListItem from "@/components/NaviListItem.vue";
 import Modal from "@/components/Modal.vue";
 
-import { useRoute } from "vue-router";
-import { Socket } from "socket.io-client";
-import { useSkStore } from "@stores/useSocketStore";
-const socket = useSkStore();
-const mySocket = ref<Socket | undefined>(undefined);
-
 const route = useRoute();
-//S: declare ref val
-const wsName = ref("");
 
-const onlineMember = ref();
-
-const wsModal = ref(false);
-const chnModal = ref(false);
-const memberModal = ref(false);
-
+const socket = useSkStore();
 const userStore = useUserStore();
 const memberStore = useMemberStore();
 const wsStore = useWsStore();
 const chnStore = useChnStore();
-
 const { workspaces } = storeToRefs(wsStore);
 const { channels } = storeToRefs(chnStore);
+
+const mySocket = ref<Socket | undefined>(undefined);
+const onlineMember = ref();
+const wsModal = ref(false);
+const chnModal = ref(false);
+const memberModal = ref(false);
 
 //S: Modal Control
 const onCloseWsModal = () => (wsModal.value = false);
@@ -111,9 +112,7 @@ const onCloseChnModal = () => (chnModal.value = false);
 const onOpenChnModal = () => (chnModal.value = true);
 
 const onCloseMemModal = () => (memberModal.value = false);
-const onOpenMemModal = () => {
-  memberModal.value = true;
-};
+const onOpenMemModal = () => (memberModal.value = true);
 //E:Modal Control
 
 const socket_disconnect = () => {
@@ -121,45 +120,51 @@ const socket_disconnect = () => {
   delete mySocket?.value;
   console.log("소켓끊음");
 };
+import { usePathStore } from "@stores/usePathStore";
+const usePath = usePathStore();
+
+onMounted(() => {
+  watch(
+    () => userStore.id,
+    () => {
+      // ### S: 그인하면 SOCKET에  LOGIN EMIT
+      if (userStore.id && chnStore.channels && mySocket?.value?.id) {
+        console.log("로그인🎃");
+        mySocket.value.emit("login", {
+          id: userStore.email,
+          channels: chnStore.channels?.map((v) => v.id),
+        });
+      }
+    }
+  );
+});
 
 //router 변경될 때마다 param 값 추출
 watchEffect(() => {
+  console.log("watchEffect");
+  let fullPath = route.fullPath;
+
+  usePath.getWorkspaceName();
   userStore.auth && wsStore.getMyWorkspace(userStore.id);
+  chnStore.fetchChannels(usePath.current_ws);
 
-  const parts = route.fullPath.split("/");
-  let workspace = parts[2]; // EX) ['','workspaces','general']
-
-  if (workspace) {
-    wsName.value = workspace;
-    chnStore.fetchChannels(workspace);
-    mySocket.value = socket.createNameSpace(wsName.value);
+  if (usePath.current_ws) {
+    mySocket.value = socket.createNameSpace(usePath.current_ws);
   }
 });
 
-watchEffect(() => {
-  if (userStore.id && chnStore.channels && mySocket?.value?.id) {
-    socket.getOnlineList(wsName.value);
-    onlineMember.value = socket.onlieList;
-  }
-  if (onlineMember.value) {
-    onlineMember.value = onlineMember.value.map((v: any) => v.split("@")[0]);
-  }
-});
-
-const onCreateWs = (name: string, url: string) => {
-  wsStore.createWorkspace(name, url).then(() => {
+const onCreateWs = (name: string) => {
+  wsStore.createWorkspace(name, name.toLowerCase()).then(() => {
     onCloseWsModal();
   });
 };
-
 const onCreateChn = (name: string) => {
-  chnStore.createChannel(wsName.value, name).then(() => {
+  chnStore.createChannel(usePath.current_ws, name).then(() => {
     onCloseChnModal();
   });
 };
-
 const onInviteMember = (email: string) => {
-  memberStore.inviteWsMember(wsName.value, email).then(() => {
+  memberStore.inviteWsMember(usePath.current_ws, email).then(() => {
     onCloseMemModal();
   });
 };

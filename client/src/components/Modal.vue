@@ -18,14 +18,6 @@
               v-model="name"
             />
           </div>
-          <div class="inputwrap">
-            <input
-              type="text"
-              placeholder="Workspace Url"
-              class="input input-lg"
-              v-model="url"
-            />
-          </div>
         </div>
         <div class="modal-foot">
           <button type="submit">생성하기</button>
@@ -100,7 +92,7 @@ const emit = defineEmits([
   "addMember",
 ]);
 const handleSubmit = () => {
-  emit("addWorkspace", name.value, url.value);
+  emit("addWorkspace", name.value);
   emit("addChannel", name.value);
   emit("addMember", email.value);
 };

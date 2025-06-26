@@ -19,57 +19,29 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, watchEffect } from "vue";
-import { useUserStore } from "@stores/userStore";
+import { onMounted, onUnmounted, ref, watchEffect } from "vue";
 import ThreeScene from "@components/ThreeScene/ThreeScene.vue";
-import { useRoute } from "vue-router";
-import { useChnStore } from "@stores/channelStore";
 
 import { Socket } from "socket.io-client";
 import { useSkStore } from "@stores/useSocketStore";
+
 const socket = useSkStore();
 const mySocket = ref<Socket | undefined>(undefined);
 
-const route = useRoute();
-const wsName = ref("");
-const chnName = ref("");
+import { usePathStore } from "@stores/usePathStore";
+const usePath = usePathStore();
 
-const userStore = useUserStore();
-const useChn = useChnStore();
+watchEffect(() => {});
 
-watchEffect(() => {
-  let paramChn = route.params.channel as string;
-  let paramWs = route.params.workspace as string;
-
-  wsName.value = paramWs;
-  chnName.value = paramChn;
-
-  if (!paramChn || !paramWs) {
-    const fullpath = route.fullPath.split("/");
-    paramChn = fullpath[4];
-    paramWs = fullpath[2];
-    wsName.value = paramWs;
-    chnName.value = paramChn;
-    mySocket.value = socket.createNameSpace(wsName.value);
-  } else {
-    mySocket.value = socket.createNameSpace(wsName.value);
-  }
-
-  //로그인하면 SOCKET에  LOGIN EMIT
-  if (userStore.id && useChn.channels && mySocket?.value?.id) {
-    socket.emitLogin(
-      userStore.email,
-      useChn.channels?.map((v) => v.id),
-      wsName.value
-    );
+onMounted(() => {
+  if (usePath.current_ws) {
+    mySocket.value = socket.createNameSpace("general");
   }
 });
 
-onMounted(() => {
-  userStore.id && userStore.myWorkspace(userStore.id);
-  if (wsName.value) {
-    mySocket.value = socket.createNameSpace(wsName.value);
-  }
+onUnmounted(() => {
+  mySocket.value?.disconnect();
+  delete mySocket.value;
 });
 </script>
 

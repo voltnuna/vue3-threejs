@@ -2,14 +2,9 @@ import { ref } from "vue";
 import { defineStore } from "pinia";
 import { io, Socket } from "socket.io-client";
 
-import { useChnStore } from "@stores/channelStore";
-import type { IChannel } from "./../types/db";
-
 const backUrl = "http://localhost:3095";
-const socketConnection = io(`${backUrl}`);
 
 export const useSkStore = defineStore("socket-connection", () => {
-  const useChnnel = useChnStore();
   const sockets: { [key: string]: Socket } = {};
   const onlieList = ref<number[]>();
 
@@ -35,7 +30,7 @@ export const useSkStore = defineStore("socket-connection", () => {
     });
     return sockets[ws];
   };
-  //- 클라이언트 data: { id: number(유저 아이디), channels: number[](채널 아이디 리스트) }
+
   const emitLogin = (userId: string, channels: number[], ws: string) => {
     sockets[ws].emit("login", { id: userId, channels: channels });
     console.log("EMIT-LOING", userId, channels);
@@ -44,11 +39,9 @@ export const useSkStore = defineStore("socket-connection", () => {
   const getOnlineList = (ws: string) => {
     sockets[ws].on("onlineList", (data: number[]) => {
       onlieList.value = data;
-      console.log("🚀🚀🚀🚀onlineList", onlieList.value);
+      console.log("🚀onlineList", onlieList.value);
     });
-    console.log("socket on dm", sockets[ws]?.hasListeners("dm"), sockets[ws]);
     return () => {
-      console.log("socket off dm", sockets[ws]?.hasListeners("dm"));
       sockets[ws]?.off("onlineList");
     };
   };
