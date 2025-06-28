@@ -3,6 +3,7 @@ import App from "./App.vue";
 import { createPinia } from "pinia";
 import router from "./router";
 import piniaPersist from "pinia-plugin-persistedstate";
+import Tres from "@tresjs/core";
 
 //createApp(App).mount('#app')
 
@@ -19,4 +20,5 @@ pinia.use(({ store }) => {
 });
 app.use(pinia);
 app.use(router);
+app.use(Tres);
 app.mount("#app");

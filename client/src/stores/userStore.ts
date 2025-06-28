@@ -89,12 +89,10 @@ export const useUserStore = defineStore(
       await axios
         .post("/api/users/logout", null, { withCredentials: true })
         .then((res) => {
-          console.log("@LOGOUT_SUCCESS: ", res.data);
           clearUser();
           localStorage.clear();
         })
         .catch((err) => {
-          //          console.log("@LOGOUT_FAIL: ", err.status);
           console.dir(err);
         });
     };

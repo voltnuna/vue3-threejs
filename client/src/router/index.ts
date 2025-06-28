@@ -5,6 +5,7 @@ import LoginPage from "@pages/LoginPage.vue";
 import SignupPage from "@pages/SignupPage.vue";
 import ChannelPage from "@/pages/ChannelPage.vue";
 import WorkspacePage from "@/pages/WorkspacePage.vue";
+import TresPage from "@/pages/Tresjs.vue";
 
 /*
 ❗ MEMO: history의 세가지 옵션:
@@ -38,7 +39,11 @@ const router = createRouter({
       name: "GeneralPage",
       component: ExplorePage,
     },
-
+    {
+      path: "/workspaces/tresjs",
+      name: "TresPage",
+      component: TresPage,
+    },
     {
       path: "/workspaces/:workspace/channel/:channel",
       name: "Channel",

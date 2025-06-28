@@ -35,6 +35,7 @@ export const useMemberStore = defineStore("member", () => {
   };
 
   const inviteWsMember = async (wsname: string, email: string) => {
+    console.log("초대");
     await axios
       .post(`/api/workspaces/${wsname}/members`, { email: email })
       .then((res) => {

@@ -1,47 +1,45 @@
-// .userform {
-//   display: inline-flex;
-//   justify-content: center;
-//   align-items: flex-start;
-//   width: 100%;
-//   height: 100%;
-//   padding-top: 15rem;
+.pd {
+  &-10 {
+    padding: 1rem;
+  }
+  &-15 {
+    padding: 1.5rem;
+  }
+  &-r-l-10 {
+    padding: 0 1rem;
+  }
+  &-t-bt-5 {
+    padding: 0.5rem 0;
+  }
+  &-t-bt-10 {
+    padding: 1rem 0;
+  }
+}
 
-//   .title {
-//     text-align: center;
-//     margin: 3rem 0;
-//     font-size: 5.5rem;
-//   }
+.mg {
+  &-10 {
+    margin: 1rem;
+  }
+  &-15 {
+    margin: 1.5rem;
+  }
+  &-t-10 {
+    margin-top: 1rem;
+  }
+  &-b-10 {
+    margin-bottom: 1rem;
+  }
+  &-r-l-10 {
+    margin: 0 1rem;
+  }
+  &-t-bt-5 {
+    margin: 0.5rem 0;
+  }
+  &-t-bt-10 {
+    margin: 1rem 0;
+  }
+}
 
-//   form {
-//     width: 30rem;
-//     box-sizing: border-box;
-//   }
-//   .input {
-//     padding: 0.8rem;
-//     margin: 0.7rem 0;
-//     border-radius: 7px;
-
-//     &-md {
-//       width: 30rem;
-//       padding: 1.1rem;
-//       font-size: 1.8rem;
-//       border: 1px solid #615f5f;
-//     }
-//   }
-
-//   button {
-//     width: 30rem;
-//     margin: 0.7rem 0;
-//     padding: 1.5rem;
-//     font-size: 1.8rem;
-//     border-radius: 7px;
-//     background-color: #0f0f0f;
-//     color: #fff;
-
-//     display: inline-flex;
-//     justify-content: center;
-//   }
-// }
 .container {
   width: 100%;
   height: 100%;

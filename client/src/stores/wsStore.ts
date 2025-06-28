@@ -29,6 +29,19 @@ export const useWsStore = defineStore("workspaces", () => {
       });
   };
 
+  const inviteMember = async (workspace: string, email: string) => {
+    await axios
+      .post(`/api/workspaces/${workspace}/members`, {
+        email,
+      })
+      .then((res) => {
+        console.log("invite member", res.data);
+      })
+      .catch((err) => {
+        console.dir(err);
+      });
+  };
+
   const createWorkspace = async (workspace: string, url: string) => {
     await axios
       .post("/api/workspaces", {
@@ -48,5 +61,6 @@ export const useWsStore = defineStore("workspaces", () => {
     fetchWorkspaces,
     createWorkspace,
     getMyWorkspace,
+    inviteMember,
   };
 });

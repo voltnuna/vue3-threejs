@@ -1,6 +1,6 @@
 <template>
   <div :class="{ pageArea: true, logined: !props.auth }">
-    <Header />
+    <!-- <Header /> -->
     <NaviBar />
     <RouterView />
   </div>

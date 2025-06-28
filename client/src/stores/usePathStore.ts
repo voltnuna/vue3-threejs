@@ -5,8 +5,8 @@ import { ref } from "vue";
 export const usePathStore = defineStore("getPath", () => {
   const route = useRoute();
 
-  const prev_ws = ref("");
   const current_ws = ref("");
+  const prev_ws = ref("");
 
   const prev_chn = ref("");
   const current_chn = ref("");
@@ -21,14 +21,15 @@ export const usePathStore = defineStore("getPath", () => {
     workspace = fullpath[2];
     channel = fullpath[4];
 
-    current_ws.value = workspace;
-    current_chn.value = channel;
-    console.log(
-      "HOOK 실행",
-      route.fullPath,
-      current_ws.value,
-      current_chn.value
-    );
+    if (prev_ws.value === current_ws.value) {
+      current_ws.value = workspace;
+      current_chn.value = channel;
+    } else {
+      prev_ws.value = current_ws.value;
+      prev_chn.value = current_chn.value;
+      current_ws.value = workspace;
+      current_chn.value = channel;
+    }
   };
 
   return { prev_ws, current_ws, prev_chn, current_chn, getWorkspaceName };

@@ -32,15 +32,23 @@
           </router-link>
         </div>
         <!-- S: -->
-        <div class="online">
+        <div class="online pd-15">
           <ul>
-            <li>🚀온라인🚀</li>
-            <li v-for="(member, idx) in onlineMember" :key="idx">
+            <li class="mg-b-10">🚀온라인🚀</li>
+            <li
+              class="pd-t-bt-5"
+              v-for="(member, idx) in socket.onlieList"
+              :key="idx"
+            >
               <span class="online-signal"></span>
               <span class="online-name">{{ member }}</span>
             </li>
           </ul>
         </div>
+      </div>
+      <div class="bottom-bar">
+        <div>{{ userStore.nickname }} 님</div>
+        <button type="button" @click="onLogout">로그아웃</button>
       </div>
     </div>
     <!-- S: Modal List -->
@@ -65,8 +73,6 @@
         @add-member="onInviteMember"
       />
     </div>
-
-    <div>sdfsdf</div>
   </div>
 </template>
 
@@ -76,6 +82,7 @@ import { ref, watchEffect, watch, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
 import { Socket } from "socket.io-client";
+import { useRouter } from "vue-router";
 
 // #################################################  S: import Stores
 import { useUserStore } from "@stores/userStore";
@@ -90,6 +97,7 @@ import NaviListItem from "@/components/NaviListItem.vue";
 import Modal from "@/components/Modal.vue";
 
 const route = useRoute();
+const router = useRouter();
 
 const usePath = usePathStore();
 const socket = useSkStore();
@@ -105,6 +113,7 @@ const onlineMember = ref();
 const wsModal = ref(false);
 const chnModal = ref(false);
 const memberModal = ref(false);
+const loginEmit = ref(false);
 
 //S: Modal Control
 const onCloseWsModal = () => (wsModal.value = false);
@@ -117,42 +126,86 @@ const onCloseMemModal = () => (memberModal.value = false);
 const onOpenMemModal = () => (memberModal.value = true);
 //E:Modal Control
 
-const socket_disconnect = () => {
-  mySocket?.value?.disconnect();
-  delete mySocket?.value;
-  console.log("소켓끊음");
+const onlines = ref([]);
+const setOnlines = () => {
+  // socket.onlieList.value;
+  console.log(
+    "바쁘다케띠",
+    socket?.onlieList?.map((v) => {
+      console.log("바아아아", v);
+    })
+  );
 };
 
-onMounted(() => {
-  watch(
-    () => userStore.id,
-    () => {
-      // ### S: 로그인하면 SOCKET에  LOGIN EMIT
-      if (userStore.id && chnStore.channels && mySocket?.value?.id) {
-        console.log("로그인🎃");
-        mySocket.value.emit("login", {
-          id: userStore.email,
-          channels: chnStore.channels?.map((v) => v.id),
-        });
-      }
+// ### S: onlieNickname.value = onlieList.value.map()join().split("@").shift();
+
+//S: Router 변경될 때마다 param 값 추출
+watch(
+  () => [route.fullPath],
+  () => {
+    if (route.fullPath === "/") return;
+    console.log("실행순서 확인 - route watch");
+    usePath.getWorkspaceName(); //fetch workspace url
+
+    if (userStore.id) {
+      userStore.auth && wsStore.getMyWorkspace(userStore.id); //get my workspace list
     }
-  );
-});
+    if (usePath.current_ws) {
+      chnStore.fetchChannels(usePath.current_ws); // get my channel list in current workspace
+    }
+  },
+  { immediate: true }
+);
 
-//router 변경될 때마다 param 값 추출
-watchEffect(() => {
-  console.log("watchEffect");
-  let fullPath = route.fullPath;
+watch(
+  () => [chnStore.channels, usePath.current_ws],
+  ([channelCount, currentWs]) => {
+    if (!userStore.id || !currentWs || !channelCount) return;
+    console.log("실행순서 확인 - socket");
 
-  usePath.getWorkspaceName();
-  userStore.auth && wsStore.getMyWorkspace(userStore.id);
-  chnStore.fetchChannels(usePath.current_ws);
+    if (usePath.prev_ws !== usePath.current_ws) {
+      console.log("이전 소켓 삭제");
+      mySocket?.value?.disconnect();
+      delete mySocket?.value;
+      console.log("소켓끊음");
+      loginEmit.value = false;
+    }
 
-  if (usePath.current_ws) {
-    mySocket.value = socket.createNameSpace(usePath.current_ws);
-  }
-});
+    if (usePath.current_ws) {
+      mySocket.value = socket.createNameSpace(usePath.current_ws);
+      socket.getOnlineList(usePath.current_ws);
+      console.log("소켓 생성😍", socket.sockets[usePath.current_ws]);
+    }
 
+    if (
+      userStore.id &&
+      chnStore.channels &&
+      socket.sockets[usePath.current_ws] &&
+      !loginEmit.value
+    ) {
+      socket.sockets[usePath?.current_ws].emit("login", {
+        id: userStore?.email,
+        channels: chnStore?.channels?.map((v) => v.id),
+      });
+      loginEmit.value = true;
+      socket.getOnlineList(usePath.current_ws);
+
+      console.log(
+        "로그인 EMIT🤢",
+        userStore.id,
+        chnStore.channels,
+        socket.sockets[usePath.current_ws]
+      );
+    }
+  },
+  { immediate: true }
+);
+const onLogout = () => {
+  const res = userStore.logout();
+  res.then(() => {
+    router.push("/login");
+  });
+};
 const onCreateWs = (name: string) => {
   wsStore.createWorkspace(name, name.toLowerCase()).then(() => {
     onCloseWsModal();
@@ -172,73 +225,83 @@ const onInviteMember = (email: string) => {
 
 <style lang="scss" scoped>
 .navibar {
-  @include setPosition(fixed, 46px, none, 0);
+  @include setPosition(fixed, 0px, none, 0);
   width: 8rem;
   height: 100%;
   background-color: #212121;
   border-right: 1px solid #474141;
+}
 
-  .workspace-bar {
-    position: relative;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+.workspace-bar {
+  position: relative;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+.title-wrap {
+  &__lg {
+    @include display-flex(flex, space-between, center);
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid #474141;
   }
-  .title-wrap {
-    &__lg {
-      @include display-flex(flex, space-between, center);
-      padding-bottom: 1.5rem;
-      border-bottom: 1px solid #474141;
-    }
-    &__md {
-      @include display-flex(flex, space-between, center);
-      padding-bottom: 0.8rem;
-      border-bottom: 1px solid #474141;
-    }
+  &__md {
+    @include display-flex(flex, space-between, center);
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #474141;
+  }
+}
+
+.channel-bar {
+  @include setPosition(fixed, 0px, none, 8rem);
+  width: 26rem;
+  height: 100%;
+  background-color: #302e2e;
+  color: #fff;
+  padding: 1.5rem;
+
+  &__title {
+    text-transform: capitalize;
+    font-size: 3.4rem;
+    line-height: 3.4rem;
+    text-align: left;
+    width: 16.5rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
-  .channel-bar {
-    position: fixed;
-    top: 46px;
-    left: 80px;
-    width: 26rem;
+  &__chn {
+    width: 100%;
     height: 100%;
-    background-color: #302e2e;
-    color: #fff;
-    padding: 1.5rem;
-    &__title {
-      text-transform: capitalize;
-      font-size: 3.4rem;
-      line-height: 3.4rem;
-      text-align: left;
-      width: 16.5rem;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    h3 {
+      @include display-flex(flex, flex-start, center);
+      height: 3rem;
+      margin: 1.5rem 0;
     }
-
-    &__chn {
+    a {
+      display: flex;
+      justify-content: flex-start;
       width: 100%;
-      height: 100%;
-      h3 {
-        height: 3rem;
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        margin: 1.5rem 0;
-      }
-      a {
-        display: flex;
-        width: 100%;
-        padding: 1rem 0;
-        font-weight: 500;
-        font-size: 1.6rem;
-        justify-content: flex-start;
-        color: #f0f0f0;
-        font-weight: 500;
-      }
+      padding: 1rem 0;
+      font-weight: 500;
+      font-size: 1.6rem;
+      color: #f0f0f0;
+      font-weight: 500;
     }
   }
 }
 
+.bottom-bar {
+  position: absolute;
+  left: -1px;
+  bottom: 0rem;
+  width: 100%;
+  height: 5rem;
+  @include display-flex(flex, space-between, center);
+  padding: 0 1.5rem;
+  line-height: 1.25;
+  color: #fff;
+  font-size: 1.6rem;
+  background-color: #212121;
+}
 .addBtn {
   @include display-flex(flex, center, center);
   width: 100%;
@@ -261,10 +324,12 @@ const onInviteMember = (email: string) => {
     border-radius: 50%;
   }
 }
+
 .online {
-  li {
-    margin: 1rem 0;
-  }
+  display: flex;
+  border-radius: 7px;
+  background-color: #212121;
+
   &-signal {
     display: inline-flex;
     background-color: #00e104;

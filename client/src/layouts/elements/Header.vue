@@ -34,7 +34,6 @@ const onLogout = () => {
   });
 };
 </script>
-
 <style lang="scss" scoped>
 .header {
   position: fixed;

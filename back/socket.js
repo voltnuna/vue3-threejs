@@ -10,7 +10,7 @@ module.exports = (server, app) => {
   });
   app.set("io", io);
   app.set("onlineMap", onlineMap);
-  const dynamicNsp = io.of(/^\/ws-.+$/).on("connect", (socket) => {
+  const dynamicNsp = io.of(/^\/ws-.+$/).on("connect", async (socket) => {
     const newNamespace = socket.nsp; // newNamespace.name === '/dynamic-101'
     if (!onlineMap[socket.nsp.name]) {
       onlineMap[socket.nsp.name] = {};
