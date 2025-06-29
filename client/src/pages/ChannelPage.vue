@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect } from "vue";
+import { ref, watch, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { useChnStore } from "@stores/channelStore";
 import { useChatStore } from "@stores/chatStore";
@@ -76,6 +76,8 @@ import { useUserStore } from "@stores/userStore";
 import Modal from "@components/Modal.vue";
 import gravatar from "gravatar";
 import { storeToRefs } from "pinia";
+import { useSkStore } from "@stores/useSocketStore";
+const socket = useSkStore();
 
 const useChat = useChatStore();
 const useUser = useUserStore();
@@ -128,6 +130,20 @@ const onSubmitChats = () => {
       });
   }
 };
+watch(
+  () => [socket.sockets[wsName.value], useChat.chats],
+  () => {
+    socket.sockets[wsName.value].on("message", () => {
+      console.log("on message");
+      useChat.getChat(wsName.value, chnName.value);
+    });
+    return () => {
+      socket.sockets[wsName.value].off("message", () => {
+        console.log("off message");
+      });
+    };
+  }
+);
 </script>
 
 <style scoped lang="scss">

@@ -20,14 +20,14 @@ const props = defineProps<{
   auth: boolean;
 }>();
 
+watch(
+  () => userStore.auth,
+  () => {
+    userStore.auth && router.push("/login");
+  }
+);
 onMounted(() => {
   !userStore.auth && router.push("/login");
-  watch(
-    () => userStore.auth,
-    () => {
-      userStore.auth && router.push("/login");
-    }
-  );
 });
 </script>
 

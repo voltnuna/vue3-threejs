@@ -172,7 +172,7 @@ watch(
     }
 
     if (usePath.current_ws) {
-      mySocket.value = socket.createNameSpace(usePath.current_ws);
+      socket.createNameSpace(usePath.current_ws);
       socket.getOnlineList(usePath.current_ws);
       console.log("소켓 생성😍", socket.sockets[usePath.current_ws]);
     }
