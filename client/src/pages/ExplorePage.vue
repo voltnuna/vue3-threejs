@@ -22,27 +22,8 @@
 import { onMounted, onUnmounted, ref, watchEffect } from "vue";
 import ThreeScene from "@components/ThreeScene/ThreeScene.vue";
 
-import { Socket } from "socket.io-client";
-import { useSkStore } from "@stores/useSocketStore";
-
-const socket = useSkStore();
-const mySocket = ref<Socket | undefined>(undefined);
-
 import { usePathStore } from "@stores/usePathStore";
 const usePath = usePathStore();
-
-watchEffect(() => {});
-
-onMounted(() => {
-  if (usePath.current_ws) {
-    mySocket.value = socket.createNameSpace("general");
-  }
-});
-
-onUnmounted(() => {
-  mySocket.value?.disconnect();
-  delete mySocket.value;
-});
 </script>
 
 <style lang="scss" scoped>
