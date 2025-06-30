@@ -8,27 +8,12 @@
 
 <script setup lang="ts">
 import NaviBar from "@layouts/elements/NaviBar.vue";
-import Header from "@layouts/elements/Header.vue";
 import { useRouter } from "vue-router";
-import { onMounted, watch } from "vue";
 import { useUserStore } from "@stores/userStore";
-
-const userStore = useUserStore();
-const router = useRouter();
 
 const props = defineProps<{
   auth: boolean;
 }>();
-
-watch(
-  () => userStore.auth,
-  () => {
-    userStore.auth && router.push("/login");
-  }
-);
-onMounted(() => {
-  !userStore.auth && router.push("/login");
-});
 </script>
 
 <!-- 이 곳에는 style에 scoped 속성 주지 말 것 -->
@@ -41,7 +26,6 @@ onMounted(() => {
   min-height: 100%;
 
   &:not(.logined) {
-    padding-top: 4.6rem;
     padding-left: 34rem;
   }
   &.logined {

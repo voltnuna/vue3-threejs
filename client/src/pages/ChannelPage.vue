@@ -4,7 +4,7 @@
       #{{ chnName }} 채널
       <button type="button" @click.prevent="onOpenMemModal">멤버 초대</button>
     </div>
-    <div class="body-area">
+    <div class="body-area" ref="scrollarea">
       <!-- ### S: -->
       <div class="chat-wrap">
         <div
@@ -68,7 +68,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, watchEffect } from "vue";
+import { ref, watch, watchEffect, onMounted, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useChnStore } from "@stores/channelStore";
 import { useChatStore } from "@stores/chatStore";
@@ -94,6 +94,20 @@ const memberModal = ref(false);
 const onCloseMemModal = () => (memberModal.value = false);
 const onOpenMemModal = () => (memberModal.value = true);
 // ### E: Modal
+
+const scrollarea = ref<HTMLElement | null>(null);
+
+watch(
+  // 메시지 바뀔 때마다 스크롤 아래로
+  () => chats.value?.length,
+  async () => {
+    await nextTick(); // DOM 업데이트 이후에 실행되도록함
+    if (scrollarea.value) {
+      scrollarea.value.scrollTop = scrollarea.value.scrollHeight;
+    }
+  },
+  { deep: true }
+);
 
 watchEffect(() => {
   let paramChn = route.params.channel as string;

@@ -5,15 +5,14 @@
     </div>
     <div class="explore-area">
       <!--  -->
-      <div v-for="lab in [{ name: 'HI' }]" class="laboratory" @click.prevent="">
-        <div class="desc">
+      <div v-for="lab in lablists" class="laboratory" @click.prevent="">
+        <div class="desc" @click.prevent="() => router.push(`${lab.url}`)">
           <div>
             <h3>{{ lab.name }}</h3>
-            <p>{{ lab.name }}</p>
+            <p>{{ lab.desc }}</p>
           </div>
         </div>
       </div>
-      <ThreeScene />
     </div>
   </div>
 </template>
@@ -21,9 +20,14 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref, watchEffect } from "vue";
 import ThreeScene from "@components/ThreeScene/ThreeScene.vue";
-
+import { lablists } from "@/utils/dummy";
+import { useRouter } from "vue-router";
 import { usePathStore } from "@stores/usePathStore";
+
+const router = useRouter();
 const usePath = usePathStore();
+
+const labRouter = () => {};
 </script>
 
 <style lang="scss" scoped>
@@ -77,7 +81,7 @@ const usePath = usePathStore();
         color: #fff;
         overflow: hidden;
         h3 {
-          font-size: 3rem;
+          font-size: 2.4rem;
         }
         p {
           font-size: 1.7rem;

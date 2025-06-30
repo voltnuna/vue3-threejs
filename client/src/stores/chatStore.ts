@@ -5,6 +5,7 @@ import axios from "axios";
 
 export const useChatStore = defineStore("chat", () => {
   const chats = ref<IChat[]>();
+  const page = ref(1);
 
   const sendChat = async (wsname: string, chnname: string, content: string) => {
     await axios
@@ -22,7 +23,7 @@ export const useChatStore = defineStore("chat", () => {
   const getChat = async (wsname: string, chnname: string) => {
     await axios
       .get(
-        `/api/workspaces/${wsname}/channels/${chnname}/chats?perPage=20&page=1`,
+        `/api/workspaces/${wsname}/channels/${chnname}/chats?perPage=100&page=${1}`,
         {
           withCredentials: true,
         }
@@ -36,5 +37,5 @@ export const useChatStore = defineStore("chat", () => {
       });
   };
 
-  return { chats, sendChat, getChat };
+  return { chats, sendChat, getChat, page };
 });
