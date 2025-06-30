@@ -78,10 +78,9 @@
 
 <script setup lang="ts">
 // #################################################  S: import Libraries
-import { ref, watchEffect, watch, onMounted } from "vue";
+import { ref, watch } from "vue";
 import { storeToRefs } from "pinia";
 import { useRoute } from "vue-router";
-import { Socket } from "socket.io-client";
 import { useRouter } from "vue-router";
 
 // #################################################  S: import Stores
@@ -108,8 +107,6 @@ const chnStore = useChnStore();
 const { workspaces } = storeToRefs(wsStore);
 const { channels } = storeToRefs(chnStore);
 
-const mySocket = ref<Socket | undefined>(undefined);
-const onlineMember = ref();
 const wsModal = ref(false);
 const chnModal = ref(false);
 const memberModal = ref(false);
@@ -126,17 +123,6 @@ const onCloseMemModal = () => (memberModal.value = false);
 const onOpenMemModal = () => (memberModal.value = true);
 //E:Modal Control
 
-const onlines = ref([]);
-const setOnlines = () => {
-  // socket.onlieList.value;
-  console.log(
-    "바쁘다케띠",
-    socket?.onlieList?.map((v) => {
-      console.log("바아아아", v);
-    })
-  );
-};
-
 // ### S: onlieNickname.value = onlieList.value.map()join().split("@").shift();
 
 //S: Router 변경될 때마다 param 값 추출
@@ -149,7 +135,11 @@ watch(
 
     if (userStore.id) {
       userStore.auth && wsStore.getMyWorkspace(userStore.id); //get my workspace list
+    } else {
+      console.log("로그인 먼저 하세용");
+      router.push("/login");
     }
+
     if (usePath.current_ws) {
       chnStore.fetchChannels(usePath.current_ws); // get my channel list in current workspace
     }
@@ -165,8 +155,8 @@ watch(
 
     if (usePath.prev_ws !== usePath.current_ws) {
       console.log("이전 소켓 삭제");
-      mySocket?.value?.disconnect();
-      delete mySocket?.value;
+      socket.sockets[usePath.current_ws]?.disconnect();
+      delete socket.sockets[usePath.current_ws];
       console.log("소켓끊음");
       loginEmit.value = false;
     }
@@ -202,9 +192,17 @@ watch(
 );
 const onLogout = () => {
   const res = userStore.logout();
-  res.then(() => {
-    router.push("/login");
-  });
+  res
+    .then(() => {
+      router.push("/login");
+    })
+    .finally(() => {
+      socket.sockets[usePath.current_ws]?.disconnect();
+      delete socket.sockets[usePath.current_ws];
+      console.log("로그아웃으로 인한 소켓 해제");
+      loginEmit.value = false;
+    });
+  socket.getOnlineList(usePath.current_ws);
 };
 const onCreateWs = (name: string) => {
   wsStore.createWorkspace(name, name.toLowerCase()).then(() => {
